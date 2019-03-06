@@ -14,7 +14,7 @@ The bpm(beats per minute) increases as you kill enemies.
 
 ###Wrong Pitch When Builded on WebGL
 Causes:
-1. The Audio Mixer of Unity is not working when building on WebGL. 
+1. The Audio Mixer of Unity is not working when building on WebGL. (Thus this issue does not occur when building on windows or simply running in Unity Editor. )
 
 ###Poor Audio
 Causes:
