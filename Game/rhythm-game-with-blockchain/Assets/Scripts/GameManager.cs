@@ -265,6 +265,7 @@ public class GameManager : MonoBehaviour {
 
 	public void ClearInstructionText()
 	{
+		if (instructionText == null) return;
 		instructionText.text = "";
 	}
 
