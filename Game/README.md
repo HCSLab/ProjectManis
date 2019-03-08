@@ -26,4 +26,4 @@ Causes:
 2. When bpm increases, audio clips should be acclerated. However, it is realized by controling the pitches, so a lot of loss is made.
 
 Solution:
-* New high quality piano sampling clips are added.  
+* New high quality piano sampling clips are added. New audio-control-system controls the playing speed without re-sampling. 
