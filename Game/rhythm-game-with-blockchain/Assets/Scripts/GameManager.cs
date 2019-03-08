@@ -13,16 +13,13 @@ public class GameManager : MonoBehaviour {
 
 	public int bpm;
 
-	public List<AudioClip> chords,notes,drums;
-	public AudioMixerGroup audioMixer;
 	public GameObject enemy;
 	public GameObject beatIndicator;
-
 	public GameObject background;
 	public List<Sprite> backgrounds;
+
 	private int backgroundIndex = 0;
 
-	private AudioSource[] audioSources;//0 as the drum, 1 as the chords, 2 as the notes
 	private bool isTryingProgressing = false;
 
 	private struct KeyPress
@@ -43,10 +40,9 @@ public class GameManager : MonoBehaviour {
 	private readonly KeyCode[] keys = { KeyCode.Q, KeyCode.W, KeyCode.O, KeyCode.P };
 
 	public event EventHandler Beat;
-	private float secondsPerBeat;
+	public float secondsPerBeat;
 	private int beatCnt;
 
-	private float errorToDisplay;
 	private Character.State enemyStateToDisplay;
 
 	public Text instructionText;
@@ -58,13 +54,6 @@ public class GameManager : MonoBehaviour {
 		if (instance == null) instance = this;
 		else Destroy(this);
 
-		audioMixer.audioMixer.SetFloat("pitch", 1f);
-
-		audioSources = GetComponents<AudioSource>();
-
-		for (int i = 0; i < 3; ++i)
-			audioSources[i].outputAudioMixerGroup = audioMixer;
-
 		keyPresses = new KeyPress[4];
 		deltaTime = 0;
 		pressIndex = 0;
@@ -72,7 +61,10 @@ public class GameManager : MonoBehaviour {
 		secondsPerBeat = 60f / (float)bpm;
 		Beat += OnBeat;
 		beatCnt = 8;
+	}
 
+	private void Start()
+	{
 		StartCoroutine(SendBeat());
 	}
 
@@ -86,10 +78,6 @@ public class GameManager : MonoBehaviour {
 				secondsPerBeat = 60f / (float)bpm;
 
 				float factor = (float)bpm / (float)(bpm - 5);
-
-				for (int i = 0; i < 3; ++i)
-					audioSources[i].pitch *= factor;
-				audioMixer.audioMixer.SetFloat("pitch", 1f / audioSources[0].pitch);
 
 				bulletVelocity *= factor;
 				barrierVelocity *= factor;
@@ -150,14 +138,6 @@ public class GameManager : MonoBehaviour {
 				Instantiate(enemy).GetComponent<Enemy>().Init(2f, 1f, 1f);
 			}
 		}
-
-		if ((beatCnt - 1) % 4 == 0)
-		{
-			if (Enemy.instance != null)
-				audioSources[1].clip = chords[(int)Enemy.instance.state];
-			else audioSources[1].clip = chords[0];
-			audioSources[1].Play();
-		}
 	}
 
 	private void CheckInput()
@@ -206,9 +186,6 @@ public class GameManager : MonoBehaviour {
 				StartCoroutine(ShowCorrectness(1));
 			}	
 		}
-			
-
-		errorToDisplay = error;
 	}
 
 	IEnumerator ShowCorrectness(int degree)
@@ -249,8 +226,7 @@ public class GameManager : MonoBehaviour {
 				{
 					keyPresses[pressIndex++] = new KeyPress(i, deltaTime);
 
-					audioSources[2].clip = notes[i];
-					audioSources[2].Play();
+					AudioManager.instance.PlayNote(i);
 
 					break;
 				}
