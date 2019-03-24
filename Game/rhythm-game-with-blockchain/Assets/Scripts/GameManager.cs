@@ -18,9 +18,13 @@ public class GameManager : MonoBehaviour {
 	public GameObject background;
 	public List<Sprite> backgrounds;
 
-	private int backgroundIndex = 0;
+	public Text firstForecastText, secondForecastText, playerStatus, enemyStatus, combo;
 
-	private bool isTryingProgressing = false;
+
+	public Text debug;
+
+
+	private int backgroundIndex = 0;
 
 	private struct KeyPress
 	{
@@ -36,18 +40,19 @@ public class GameManager : MonoBehaviour {
 
 	private float deltaTime;
 	private int pressIndex;
-	private readonly int[,] correctInput = { { 0, 1, 2, 3 }, { 3, 2, 1, 0 }, { 1, 2, 1, 2 } };
+	private readonly int[,] correctInput = { { 1, 2, 1, 2 }, { 0,0,0,0 }, { 3,3,3,3 }, { 3, 0, 3, 0 } };
 	private readonly KeyCode[] keys = { KeyCode.Q, KeyCode.W, KeyCode.O, KeyCode.P };
 
-	public event EventHandler Beat;
+	[HideInInspector]
+	public float secondsPerHalfBeat;
+	[HideInInspector]
 	public float secondsPerBeat;
-	private int beatCnt;
 
-	private Character.State enemyStateToDisplay;
+	[HideInInspector]
+	public int playerActionIndex, enemyActionIndex, playerAttackStrength, enemyAttackStrength;
 
-	public Text instructionText;
-	public Text informationText;
-	public Text correctnessText;
+	private int halfBeatCnt;
+	private bool isLevelUpTurn = false;
 
 	private void Awake()
 	{
@@ -59,38 +64,58 @@ public class GameManager : MonoBehaviour {
 		pressIndex = 0;
 
 		secondsPerBeat = 60f / (float)bpm;
-		Beat += OnBeat;
-		beatCnt = 8;
+		secondsPerHalfBeat = secondsPerBeat / 2f;
+		halfBeatCnt = 8;
 	}
 
 	private void Start()
 	{
-		StartCoroutine(SendBeat());
+		StartCoroutine(HalfBeat());
 	}
 
-	IEnumerator SendBeat()
+	IEnumerator HalfBeat()
 	{
+		int lastActionOfPlayer = -1;
+
 		while (true)
 		{
-			if (isTryingProgressing)
+			if (halfBeatCnt % 2 == 1)
 			{
-				bpm += 5;
-				secondsPerBeat = 60f / (float)bpm;
+				background.GetComponent<SpriteRenderer>().sprite = backgrounds[backgroundIndex];
+				backgroundIndex = (backgroundIndex + 1) % 2;
 
-				float factor = (float)bpm / (float)(bpm - 5);
-
-				bulletVelocity *= factor;
-				barrierVelocity *= factor;
-				deltaScalePerFrame *= factor;
-				playerVelocity *= factor;
-
-				isTryingProgressing = false;
+				GetIndicatorVisible();
 			}
+			else GetIndicatorInvisible();
 
-			if (Beat != null)
-				Beat(this, EventArgs.Empty);
+			halfBeatCnt = halfBeatCnt % 8 + 1;
 
-			yield return new WaitForSeconds(secondsPerBeat);
+			if (isLevelUpTurn)
+			{
+				if(halfBeatCnt == 8)
+					if (Player.instance.skillPoint == 0) isLevelUpTurn = false;
+			}
+			else if (halfBeatCnt == 1)
+			{
+				GenerateEnemy();
+				lastActionOfPlayer = CheckInput();
+				ClearInput();
+			}
+			else if (halfBeatCnt == 2)
+			{
+				if(!gameObject.GetComponent<AudioSource>().isPlaying)
+					gameObject.GetComponent<AudioSource>().Play();
+
+				if (Enemy.instance != null)
+				{
+					Player.instance.Act(lastActionOfPlayer);
+					Enemy.instance.Act();
+				}
+				else Player.instance.Act(-2); //refresh player's state
+				HandleActions();
+				Player.instance.CheckLevelUp();
+			}
+			yield return new WaitForSeconds(secondsPerHalfBeat);
 		}
 	}
 
@@ -104,174 +129,179 @@ public class GameManager : MonoBehaviour {
 		beatIndicator.SetActive(false);
 	}
 
-	void OnBeat(object sender, EventArgs eventArgs)
+	private void GenerateEnemy()
 	{
-		background.GetComponent<SpriteRenderer>().sprite = backgrounds[backgroundIndex];
-		backgroundIndex = (backgroundIndex + 1) % 2;
+		if (Enemy.instance != null) return;
+		GameObject newEnemy = Instantiate(enemy);
+		newEnemy.GetComponent<Enemy>().career = (Character.Career)UnityEngine.Random.Range(0, 4);
+		newEnemy.GetComponent<Enemy>().InitializeProperties();
+	}
 
-		GetIndicatorVisible();
-		Invoke("GetIndicatorInvisible", secondsPerBeat / 2f);
-
-		beatCnt = (beatCnt) % 8 + 1;
-
-		if (beatCnt == 1)
+	private void ClearInput()
+	{
+		pressIndex = 0;
+		for (int i = 0; i < 4; ++i)
 		{
-			UpdateInstructionText();
-
-			CheckInput();
-
-			pressIndex = 0;
-			for (int i = 0; i < 4; ++i)
-				keyPresses[i].key = 0;
-			beatIndicator.GetComponent<SpriteRenderer>().color = Color.cyan;
+			keyPresses[i].timing = 0f;
+			keyPresses[i].key = -1;
 		}
-		else if (beatCnt == 3)
-			Player.instance.MoveBack();
-		else if (beatCnt == 4)
-			deltaTime = 0;
-		else if (beatCnt == 5)
-			beatIndicator.GetComponent<SpriteRenderer>().color = Color.green;
-		else if (beatCnt == 7)
+		deltaTime = 0f;	
+	}
+
+	private int times = 0;
+
+	private int CheckInput()
+	{
+		debug.text = times + "\n";
+
+		List<int> possibleMoves = new List<int>();
+		Queue<int> movesToRemove = new Queue<int>();
+		for (int i = 0; i < 4; ++i) possibleMoves.Add(i);
+		for (int i = 0; i < 4; ++i)
 		{
-			if (Enemy.instance == null)
+			foreach(int j in possibleMoves)
+				if (correctInput[j, i] != keyPresses[i].key)
+					movesToRemove.Enqueue(j);
+			while (movesToRemove.Count > 0)
+				possibleMoves.Remove(movesToRemove.Dequeue());
+		}
+		if (possibleMoves.Count == 0) return -1;
+		int move = possibleMoves[0];
+
+		float error = 0f;
+		float maxError = secondsPerHalfBeat * secondsPerHalfBeat * 4f;
+
+		for (int i = 0; i < 4; ++i)
+		{
+			float temp = keyPresses[i].timing - secondsPerBeat * i -secondsPerHalfBeat;
+			error += temp * temp;
+		}
+
+		debug.text += playerActionIndex.ToString() + "\n" + enemyActionIndex + "\n" + enemyAttackStrength
+			+ "\n" + error
+			+ "\n" + maxError;
+		for (int i = 0; i < 4; ++i)
+			debug.text += "\n"+keyPresses[i].key;
+		times++;
+		
+
+		if (error < maxError) return move;
+		else return -1;
+	}
+
+	private void HandleActions()
+	{
+		if (playerActionIndex == 0)
+		{
+			if (enemyActionIndex == 0)
 			{
-				Instantiate(enemy).GetComponent<Enemy>().Init(2f, 1f, 1f);
+				//enemy defended
+			}
+			else
+			{
+				Enemy.instance.ReceiveAttack(playerAttackStrength);
+				Enemy.instance.ClearStrengthStorage();
+			}
+		}
+		else if (playerActionIndex == 1)
+		{
+			if (enemyActionIndex == 1)
+			{
+				Player.instance.ReceiveAttack(enemyActionIndex);
+				Player.instance.FailToMove();
+			}
+			else if (enemyActionIndex == 2)
+			{
+				//player missed
+			}
+		}
+		else if (playerActionIndex == 2)
+		{
+			if (enemyActionIndex == 2)
+			{
+				Player.instance.ReceiveAttack(enemyActionIndex);
+				Player.instance.FailToMove();
+			}
+			else if (enemyActionIndex == 1)
+			{
+				//player missed
+			}
+		}
+		else if (playerActionIndex == 3 || playerActionIndex == -1)
+		{
+			if (enemyActionIndex == 1 || enemyActionIndex == 2)
+			{
+				Player.instance.ReceiveAttack(enemyActionIndex);
+				Player.instance.FailToMove();
 			}
 		}
 	}
 
-	private void CheckInput()
+	private void UpdateUI()
 	{
-		if (Enemy.instance == null||!Enemy.instance.enteredFirstBar) return;
-		Character.State enemyState = Enemy.instance.lastState;
-		float error = 0, raw;
-		for(int i = 0; i < 4; ++i)
+		if (Enemy.instance != null)
 		{
-			if (keyPresses[i].key != correctInput[(int)enemyState, i])
-			{
-				error += 23333f;
-				break;
-			}
-			raw = keyPresses[i].timing - secondsPerBeat * (float)(i+1);
-			error += raw * raw;
-		}
+			firstForecastText.text = Enemy.instance.GetForecast(0);
+			secondForecastText.text = Enemy.instance.GetForecast(1);
 
-		float upperBound = secondsPerBeat * secondsPerBeat;//upper bound = 4*(secondsPerbeat/2)^2
-
-		if (enemyState == Character.State.Other)
-		{
-			if (error >= upperBound) StartCoroutine(ShowCorrectness(0));
-			else if (error <= upperBound * 0.75f)
-			{
-				Player.instance.Shoot(1f);
-				StartCoroutine(ShowCorrectness(2));
-			}
-			else
-			{
-				Player.instance.Shoot(0.5f);
-				StartCoroutine(ShowCorrectness(1));
-			}
+			enemyStatus.text = "Enemy\n"
+			+ "HP: " + Enemy.instance.health + "\n"
+			+ "STR: " + Enemy.instance.strength + "\n"
+			+ "DEF: " + Enemy.instance.armour + "\n"
+			+ "LUCK: " + Enemy.instance.luck + "\n";
 		}
-		else
-		{
-			if (error >= upperBound) StartCoroutine(ShowCorrectness(0));
-			else if (error <= upperBound * 0.75f)
-			{
-				Player.instance.MoveTo(enemyState == Character.State.Right);
-				StartCoroutine(ShowCorrectness(2));
-			}
-			else
-			{
-				Player.instance.MoveTo(enemyState == Character.State.Right);
-				StartCoroutine(ShowCorrectness(1));
-			}	
-		}
-	}
+		else firstForecastText.text = secondForecastText.text = "";
 
-	IEnumerator ShowCorrectness(int degree)
-	{
-		correctnessText.gameObject.transform.parent.gameObject.SetActive(true);
-		switch (degree)
-		{
-			case 0:
-				correctnessText.text = "MISS";
-				correctnessText.color = Color.red;
-				break;
-			case 1:
-				correctnessText.text = "FINE";
-				correctnessText.color = Color.cyan;
-				break;
-			case 2:
-				correctnessText.text = "GREAT";
-				correctnessText.color = Color.green;
-				break;
-		}
+		playerStatus.text = "Player\n"
+			+ "HP: " + Player.instance.health + "\n"
+			+ "STR: " + Player.instance.strength + "\n"
+			+ "DEF: " + Player.instance.armour + "\n"
+			+ "LUCK: " + Player.instance.luck + "\n";
 
-		yield return new WaitForSeconds(secondsPerBeat * 2);
-		correctnessText.gameObject.transform.parent.gameObject.SetActive(false);
-		yield break;
+		combo.text = "COMBO: " + Player.instance.combo;
 	}
 
 	private void Update()
 	{
-		UpdateInformationText();
+		UpdateUI();
+
+		if (isLevelUpTurn&&Player.instance.skillPoint>=5)
+		{
+			for (int i = 0; i < 4; ++i)
+			{
+				if (Input.GetKeyDown(keys[i]))
+				{
+					Player.instance.skillPoint -= 5;
+					switch (i)
+					{
+						case 0: Player.instance.health += 5;break;
+						case 1: Player.instance.strength += 5;break;
+						case 2: Player.instance.armour += 5;break;
+						case 3: Player.instance.luck += 5;break;
+					}
+					break;
+				}
+			}
+		}
 
 		deltaTime += Time.deltaTime;
 
-		if (beatCnt>=4 &&pressIndex<4)
+		if (pressIndex<4)
 		{
 			for(int i = 0; i < 4; ++i)
 			{
 				if (Input.GetKeyDown(keys[i]))
 				{
 					keyPresses[pressIndex++] = new KeyPress(i, deltaTime);
-
-					AudioManager.instance.PlayNote(i);
-
 					break;
 				}
 			}
 		}
 	}
-	
-	private void UpdateInstructionText()
-	{
-		if (Enemy.instance == null)
-		{
-			instructionText.text = "";
-			return;
-		}
 
-		switch (Enemy.instance.state)
-		{
-			case Character.State.Left:
-				instructionText.text = "Q -> W -> O -> P";
-				break;
-			case Character.State.Right:
-				instructionText.text = "P -> O -> W -> Q";
-				break;
-			case Character.State.Other:
-				instructionText.text = "W -> O -> W -> O";
-				break;
-		}
-	}
-
-	private void UpdateInformationText()
+	public void EnterLevelUpTurn()
 	{
-		informationText.text = "SCORE: " + Player.instance.score
-			+ "\n" + "BPM: " + bpm
-			+ "\n" + "HEALTH: " + Player.instance.Health;
-	}
-
-	public void ClearInstructionText()
-	{
-		if (instructionText == null) return;
-		instructionText.text = "";
-	}
-
-	public void TryToProgress()
-	{
-		isTryingProgressing = true;
+		isLevelUpTurn = true;
 	}
 
 	public void GameOver()

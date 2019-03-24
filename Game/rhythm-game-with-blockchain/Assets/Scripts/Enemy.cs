@@ -6,11 +6,34 @@ using UnityEngine;
 public class Enemy : Character {
 	static public Enemy instance;
 
-	public GameObject leftBarrier, rightBarrier;
 	public int beatCnt, attackCnt;
-	public State lastState;
+	public Career career;
 
-	public bool enteredFirstBar = false;
+	private int firstMove, secondMove;
+
+	private readonly float[,] actionPossibility = { 
+		{ 0.25f, 0.25f, 0.25f, 0.25f }, //warrier
+		{ 0.25f, 0.2f, 0.2f, 0.35f }, //tank
+		{ 0.35f, 0.2f, 0.2f, 0.25f }, //magician
+		{ 0.15f, 0.3f, 0.3f, 0.25f } //thief
+	};
+
+	static readonly int[,] deltaProperties = {
+		{ 10 + 10, 10 + 10, 5 + 5, 5 + 5 },
+		{ 10 + 6, 10 + 12, 5 + 4, 5 + 8 },
+		{ 10 + 5, 10 + 14, 5 + 9, 5 + 2 },
+		{ 10 + 5, 10 + 14, 5 + 9, 5 + 2 }
+	};
+
+	public void InitializeProperties()
+	{
+		int deltaLevel = Player.instance.level - 1;
+		level += deltaLevel;
+		health += deltaLevel * deltaProperties[(int)career, 0];
+		strength += deltaLevel * deltaProperties[(int)career, 1];
+		luck += deltaLevel * deltaProperties[(int)career, 2];
+		armour += deltaLevel * deltaProperties[(int)career, 3];
+	}
 
 	private void Awake()
 	{
@@ -19,60 +42,83 @@ public class Enemy : Character {
 
 		attackCnt = 0;
 		beatCnt = 7;
-		state = State.Other;
-		GameManager.instance.Beat += OnBeat;
+
+		firstMove = secondMove = 0;
+		storageFactor = 1f;
 	}
 
-	private void OnBeat(object sender, EventArgs eventArgs)
+	public void Act()
 	{
-		beatCnt = beatCnt % 8 + 1;
+		DeployAction(firstMove);
+		firstMove = secondMove;
+		secondMove = GenerateNewMove();
+	}
 
-		if (beatCnt == 1)
-		{
-			enteredFirstBar = true;
+	private int GenerateNewMove()
+	{
+		float[] cdf = new float[5];
+		cdf[0] = 0f;
+		for (int i = 0; i < 4; ++i)
+			cdf[i + 1] = cdf[i] + actionPossibility[(int)career, i];
+		float rand = UnityEngine.Random.Range(0f, 1f);
 
-			if (lastState != Character.State.Other)
-				Instantiate(lastState == Character.State.Left ? leftBarrier : rightBarrier).GetComponent<Barrier>().strength
-					= strength;
-		}
-
-		if (beatCnt == 8)
-		{
-			lastState = state;
-
-			++attackCnt;
-			if (attackCnt == 3)
+		int ret = 0;
+		for (int i = 0; i < 4; ++i)
+			if (cdf[i] <= rand && rand <= cdf[i + 1])
 			{
-				attackCnt = 0;
-				state = Character.State.Other;
+				ret = i;
+				break;
 			}
-			else state = UnityEngine.Random.Range(0, 2) == 0 ? Character.State.Left : Character.State.Right;
+
+		return ret;
+	}
+
+	private void DeployAction(int actionIndex)
+	{
+		GameManager.instance.enemyActionIndex = actionIndex;
+
+		switch (actionIndex)
+		{
+			case 0: break;//defend
+			case 1: DeployAttack(); break;//attack left
+			case 2: DeployAttack(); break;//attack right
+			case 3: StoreStrength(); break;
+			case -1: break;//do nothing
 		}
 	}
 
-	private void OnTriggerEnter2D(Collider2D collision)
+	private void DeployAttack()
 	{
-		if (lastState != State.Other) return;
-		GameObject attacker = collision.gameObject;
-		if (attacker.tag == "Enemy") return;
-		ReceiveAttack(attacker.GetComponent<Bullet>().strength);
-		Destroy(attacker);
-		if (health <= 0)	
-			Destroy(gameObject);
+		float attackSize = (float)strength * storageFactor;
+		if (UnityEngine.Random.Range(0f, 1f) <= (float)luck / 1000f)
+			attackSize *= 2;
+
+		GameManager.instance.enemyAttackStrength = (int)attackSize;
+
+		ClearStrengthStorage();
+	}
+
+	public string GetForecast(int index)
+	{
+		if (index == 0) return IndexToAction(firstMove);
+		if (index == 1) return IndexToAction(secondMove);
+		return "Nothing";
+	}
+
+	private string IndexToAction(int actionIndex)
+	{
+		switch (actionIndex)
+		{
+			case 0: return "Defend";
+			case 1: return "Attack L";
+			case 2: return "Attack R";
+			case 3: return "Store";
+			default: return "Nothing";
+		}
 	}
 
 	private void OnDestroy()
 	{
-		GameManager.instance.TryToProgress();
-		GameManager.instance.ClearInstructionText();
-		Player.instance.score += 1; //1 as the deltaScore
-		GameManager.instance.Beat -= OnBeat;
-	}
-
-	public void Init(float health,float strength,float armour)
-	{
-		this.health = health;
-		this.strength = strength;
-		this.armour = armour;
+		Player.instance.exp += 1;
 	}
 }

@@ -6,18 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/DungeonKit/Scenes/MainMenu.unity
-    guid: 0c052b025b79cbd45aedb5a6c00a41a8
+    path: Assets/Scenes/Start.unity
+    guid: 0be7b032ae1d8084387291c98cf642e8
   - enabled: 1
-    path: Assets/DungeonKit/Scenes/LoadingScene.unity
-    guid: d532dc0db26b468499443fccda62ef6a
-  - enabled: 1
-    path: Assets/DungeonKit/Scenes/GameUI.unity
-    guid: c7da2b7c0d79d8e4f8ce679e284f9822
-  - enabled: 1
-    path: Assets/DungeonKit/Scenes/Levels/Lvl_0.unity
-    guid: 85a4de67c0299c24faa1ae9973fef5ad
-  - enabled: 1
-    path: Assets/DungeonKit/Scenes/Levels/Lvl_1.unity
-    guid: 02a920e0e42f03e4dbcd80bba79bb229
+    path: Assets/Scenes/MainGame.unity
+    guid: 2cda990e2423bbf4892e6590ba056729
   m_configObjects: {}

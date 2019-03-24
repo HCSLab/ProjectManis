@@ -5,68 +5,79 @@ using UnityEngine;
 public class Player : Character {
 	static public Player instance;
 
-	public GameObject bullet;
-	public int score;
-	
+	public int combo;
+	public int exp;
+
 	private void Awake()
 	{
 		if (instance == null) instance = this;
 		else Destroy(this);
-		score = 0;
-		health = 3;
-		strength = 2;
-		armour = 0;
+		storageFactor = 1f;
+		combo = 0;
+		exp = 0;
 	}
 
-	private void OnTriggerEnter2D(Collider2D collision)
+	public void Act(int actionIndex)
 	{
-		GameObject attacker = collision.gameObject;
-		if (attacker.tag == "Player") return;
-		ReceiveAttack(attacker.GetComponent<Barrier>().strength);
-		Destroy(attacker);
-		if (health <= 0) GameManager.instance.GameOver();
+		GameManager.instance.playerActionIndex = actionIndex;
+
+		combo += 1;
+
+		switch (actionIndex)
+		{
+			case 0: DeployAttack();break;
+			case 1: MoveTo(true);break;
+			case 2: MoveTo(false);break;
+			case 3: StoreStrength();break;
+			case -1: FailToMove();break;
+			case -2: Refresh();break;
+		}
 	}
 
-	public void Shoot(float factor)
+	private void Refresh()
 	{
-		state = State.Other;
-		Instantiate(bullet).GetComponent<Bullet>().strength = factor*strength;
+		storageFactor = 1f;
+		combo -= 1;
+	}
+
+	public void FailToMove()
+	{
+		combo = 0;
+		ClearStrengthStorage();
+	}
+
+
+	private void DeployAttack()
+	{
+		float attackSize = (float)strength * storageFactor * (1f + 0.1f * (float)combo);
+		if (UnityEngine.Random.Range(0f, 1f) <= (float)luck / 1000f)
+			attackSize *= 2;
+
+		GameManager.instance.playerAttackStrength = (int)attackSize;
+		
+		ClearStrengthStorage();
 	}
 
 	public void MoveTo(bool isLeft)
 	{
-		state = isLeft ? State.Left : State.Right;
-		StartCoroutine(Move(GameManager.instance.playerVelocity, isLeft));
+		gameObject.transform.position += new Vector3((isLeft ? -1 : 1) * 30f, 0f, 0f);
+		StartCoroutine(MoveBackTo(!isLeft));
 	}
 
-	IEnumerator Move(float velocity,bool isLeft)
+	IEnumerator MoveBackTo(bool isLeft)
 	{
-		float directionFactor = isLeft ? -1f : 1f;
-		for(int i = 0; i < 15; ++i)
+		yield return new WaitForSeconds(GameManager.instance.secondsPerBeat);
+		gameObject.transform.position += new Vector3((isLeft ? -1 : 1) * 30f, 0f, 0f);
+		yield break;
+	}
+
+	public void CheckLevelUp()
+	{
+		if (exp >= 3 * UnityEngine.Mathf.Log(level + 3f,2.71828f))
 		{
-			transform.position = transform.position + new Vector3(velocity * directionFactor, 0f, 0f);
-			yield return new WaitForSeconds(0.02f);
-		}
-	}
-
-	public void MoveBack()
-	{
-		if(state!=State.Other) MoveTo(state == State.Right);
-		state = State.Other;
-	}
-
-	public void Init(int health, int strength, int armour)
-	{
-		this.health = health;
-		this.strength = strength;
-		this.armour = armour;
-	}
-
-	public float Health
-	{
-		get
-		{
-			return health;
+			exp = 0;
+			LevelUp();
+			GameManager.instance.EnterLevelUpTurn();
 		}
 	}
 }
