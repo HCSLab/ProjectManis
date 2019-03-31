@@ -207,7 +207,7 @@ public class GameManager : MonoBehaviour {
 		{
 			if (enemyActionIndex == 1)
 			{
-				Player.instance.ReceiveAttack(enemyActionIndex);
+				Player.instance.ReceiveAttack(enemyAttackStrength);
 				Player.instance.FailToMove();
 			}
 			else if (enemyActionIndex == 2)
@@ -219,7 +219,7 @@ public class GameManager : MonoBehaviour {
 		{
 			if (enemyActionIndex == 2)
 			{
-				Player.instance.ReceiveAttack(enemyActionIndex);
+				Player.instance.ReceiveAttack(enemyAttackStrength);
 				Player.instance.FailToMove();
 			}
 			else if (enemyActionIndex == 1)

@@ -36,7 +36,7 @@ public class Character : MonoBehaviour {
 
 	public void ReceiveAttack(int attakerStrength)
 	{
-		health -= attakerStrength - armour;
+		health -= UnityEngine.Mathf.Max(0, attakerStrength - armour);
 		if (health <= 0)
 			Destroy(gameObject);
 	}
