@@ -152,6 +152,10 @@ Prefab:
       propertyPath: m_RootOrder
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4285879573150924, guid: 2927b7d69fddf6648ab472124b7492e0, type: 2}
+      propertyPath: m_LocalScale.x
+      value: 8
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 2927b7d69fddf6648ab472124b7492e0, type: 2}
   m_IsPrefabParent: 0
@@ -407,7 +411,7 @@ Prefab:
     - target: {fileID: 114809683418219958, guid: 9392c1c819298214c990c8685c75663e,
         type: 2}
       propertyPath: health
-      value: 100
+      value: 300
       objectReference: {fileID: 0}
     - target: {fileID: 114809683418219958, guid: 9392c1c819298214c990c8685c75663e,
         type: 2}
@@ -433,6 +437,11 @@ Prefab:
       value: 
       objectReference: {fileID: 21300000, guid: 821e270672ad9844f8ea85b36280d3ef,
         type: 3}
+    - target: {fileID: 114809683418219958, guid: 9392c1c819298214c990c8685c75663e,
+        type: 2}
+      propertyPath: strength
+      value: 200
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 0}
   m_ParentPrefab: {fileID: 100100000, guid: 9392c1c819298214c990c8685c75663e, type: 2}
@@ -571,7 +580,7 @@ Transform:
   m_GameObject: {fileID: 528151349}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: -50, z: 0}
-  m_LocalScale: {x: 7.5, y: 1, z: 1}
+  m_LocalScale: {x: 8, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -662,6 +671,7 @@ GameObject:
   - component: {fileID: 1085100523}
   - component: {fileID: 1085100519}
   - component: {fileID: 1085100520}
+  - component: {fileID: 1085100521}
   m_Layer: 0
   m_Name: Game Manager
   m_TagString: Untagged
@@ -800,6 +810,37 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &1085100521
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1085100518}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54a20d72bc4226c448399607ee8c8338, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  leftWalls:
+  - {fileID: 21300000, guid: a27680fdce5c1b141b8adb0af046d2e8, type: 3}
+  rightWalls:
+  - {fileID: 21300000, guid: eaf495508353b444cae3f12fac50c60e, type: 3}
+  floors:
+  - {fileID: 21300000, guid: d69413a0a3d4aad49b9d83a825f3f732, type: 3}
+  items:
+  - {fileID: 21300000, guid: 820ab6aea6499a548ac37b1c67e71db4, type: 3}
+  - {fileID: 21300000, guid: db06b1e55d136ba4aabb88adafbaf35c, type: 3}
+  - {fileID: 21300000, guid: f0815c453b6e5d6408462bea44ec95b9, type: 3}
+  - {fileID: 21300000, guid: 18fb6375f12b1da49b9d12341be3e6fb, type: 3}
+  - {fileID: 21300000, guid: 86d23679b0c7e794aaaccf1c637e2ff4, type: 3}
+  - {fileID: 21300000, guid: e7c57922a0978d64a83d6da13d989926, type: 3}
+  - {fileID: 21300000, guid: 0a8e4880412ae7a44be0480bce449885, type: 3}
+  - {fileID: 21300000, guid: 69a334435140a2445b57ab3641b97393, type: 3}
+  emptyTile: {fileID: 1799624247316552, guid: 81e39ba07e1ba9348ba3f2830aadef6b, type: 2}
+  emptyItem: {fileID: 1935737193135468, guid: 15874c0c085704f4783f11c43d0d963b, type: 2}
+  screenBorderDetector: {fileID: 1455801035264708, guid: 2a481db0af3b83742842e353e2badd89,
+    type: 2}
+  itemsPerScreen: 8
 --- !u!4 &1085100523
 Transform:
   m_ObjectHideFlags: 0
@@ -1002,8 +1043,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   skillPoint: 0
-  health: 100
-  strength: 50
+  health: 300
+  strength: 200
   luck: 100
   armour: 25
   level: 1
@@ -1048,7 +1089,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 784131069
-  m_SortingLayer: 4
+  m_SortingLayer: 3
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: a21c7c60193516a44ab698373974d211, type: 3}
   m_Color: {r: 1, g: 0.99149597, b: 0, a: 1}

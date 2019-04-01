@@ -50,6 +50,8 @@ public class GameManager : MonoBehaviour {
 	private int halfBeatCnt;
 	private bool isLevelUpTurn = false;
 
+	private BackgroundManager backgroundManager;
+
 	private void Awake()
 	{
 		if (instance == null) instance = this;
@@ -66,6 +68,8 @@ public class GameManager : MonoBehaviour {
 
 	private void Start()
 	{
+		backgroundManager = gameObject.GetComponent<BackgroundManager>();
+		backgroundManager.GenerateBackground();
 		StartCoroutine(HalfBeat());
 	}
 
@@ -202,6 +206,11 @@ public class GameManager : MonoBehaviour {
 			{
 				Enemy.instance.ReceiveAttack(playerAttackStrength);
 				Enemy.instance.ClearStrengthStorage();
+				if (enemyActionIndex == 1 || enemyActionIndex == 2)
+				{
+					Player.instance.ReceiveAttack(enemyAttackStrength);
+					Player.instance.FailToMove();
+				}
 			}
 		}
 		else if (playerActionIndex == 1)
