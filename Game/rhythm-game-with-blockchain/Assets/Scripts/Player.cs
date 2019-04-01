@@ -8,6 +8,8 @@ public class Player : Character {
 	public int combo;
 	public int exp;
 
+	public List<Sprite> playerSprites;
+
 	private void Awake()
 	{
 		if (instance == null) instance = this;
@@ -79,5 +81,15 @@ public class Player : Character {
 			LevelUp();
 			GameManager.instance.EnterLevelUpTurn();
 		}
+	}
+
+	public void UpdateSprite()
+	{
+		gameObject.GetComponent<SpriteRenderer>().sprite = playerSprites[(int)GetCareer()];
+	}
+
+	private void OnDestroy()
+	{
+		GameManager.instance.GameOver();
 	}
 }

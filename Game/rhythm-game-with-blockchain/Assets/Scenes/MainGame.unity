@@ -343,6 +343,11 @@ Prefab:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 114809683418219958, guid: 9392c1c819298214c990c8685c75663e,
+        type: 2}
+      propertyPath: playerSprites.Array.size
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 4293308480261962, guid: 9392c1c819298214c990c8685c75663e, type: 2}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -399,6 +404,35 @@ Prefab:
       propertyPath: m_LocalScale.x
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 114809683418219958, guid: 9392c1c819298214c990c8685c75663e,
+        type: 2}
+      propertyPath: health
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 114809683418219958, guid: 9392c1c819298214c990c8685c75663e,
+        type: 2}
+      propertyPath: playerSprites.Array.data[0]
+      value: 
+      objectReference: {fileID: 21300000, guid: 4a5b81912f9532b42acd5e2d4e707bf2,
+        type: 3}
+    - target: {fileID: 114809683418219958, guid: 9392c1c819298214c990c8685c75663e,
+        type: 2}
+      propertyPath: playerSprites.Array.data[1]
+      value: 
+      objectReference: {fileID: 21300000, guid: 33c160319f3126e4eadf56c462f6ddf2,
+        type: 3}
+    - target: {fileID: 114809683418219958, guid: 9392c1c819298214c990c8685c75663e,
+        type: 2}
+      propertyPath: playerSprites.Array.data[2]
+      value: 
+      objectReference: {fileID: 21300000, guid: 6bdddb48a1b15224ab69178ada4ceaf9,
+        type: 3}
+    - target: {fileID: 114809683418219958, guid: 9392c1c819298214c990c8685c75663e,
+        type: 2}
+      propertyPath: playerSprites.Array.data[3]
+      value: 
+      objectReference: {fileID: 21300000, guid: 821e270672ad9844f8ea85b36280d3ef,
+        type: 3}
     m_RemovedComponents:
     - {fileID: 0}
   m_ParentPrefab: {fileID: 100100000, guid: 9392c1c819298214c990c8685c75663e, type: 2}
@@ -731,6 +765,11 @@ MonoBehaviour:
   backgrounds:
   - {fileID: 21300002, guid: d9ac55a2e83ca0d4c908db71ae771caa, type: 3}
   - {fileID: 21300004, guid: d9ac55a2e83ca0d4c908db71ae771caa, type: 3}
+  enemies:
+  - {fileID: 21300000, guid: 4c45cd069825c43469b15b88ac1fcc40, type: 3}
+  - {fileID: 21300000, guid: a9c4d599e74f26048966841adf859682, type: 3}
+  - {fileID: 21300000, guid: 415e4465a9f9fd14f88bc4d53c624120, type: 3}
+  - {fileID: 21300000, guid: ac957da7c1965b140ab94feeca497793, type: 3}
   firstForecastText: {fileID: 1709610852}
   secondForecastText: {fileID: 1220461847}
   playerStatus: {fileID: 354113797}
@@ -1047,6 +1086,11 @@ MonoBehaviour:
   level: 1
   combo: 0
   exp: 0
+  playerSprites:
+  - {fileID: 21300000, guid: 4a5b81912f9532b42acd5e2d4e707bf2, type: 3}
+  - {fileID: 21300000, guid: 33c160319f3126e4eadf56c462f6ddf2, type: 3}
+  - {fileID: 21300000, guid: 6bdddb48a1b15224ab69178ada4ceaf9, type: 3}
+  - {fileID: 21300000, guid: 821e270672ad9844f8ea85b36280d3ef, type: 3}
 --- !u!212 &1272372397
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -1296,7 +1340,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -200, y: -120}
+  m_AnchoredPosition: {x: -180, y: -120}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1808908539
@@ -1325,11 +1369,11 @@ MonoBehaviour:
     m_BestFit: 0
     m_MinSize: 1
     m_MaxSize: 40
-    m_Alignment: 4
+    m_Alignment: 3
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 0
-    m_VerticalOverflow: 0
+    m_VerticalOverflow: 1
     m_LineSpacing: 1
   m_Text: COMBO
 --- !u!222 &1808908540

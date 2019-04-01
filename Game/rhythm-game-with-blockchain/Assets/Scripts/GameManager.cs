@@ -16,7 +16,7 @@ public class GameManager : MonoBehaviour {
 	public GameObject enemy;
 	public GameObject beatIndicator;
 	public GameObject background;
-	public List<Sprite> backgrounds;
+	public List<Sprite> backgrounds,enemies;
 
 	public Text firstForecastText, secondForecastText, playerStatus, enemyStatus, combo;
 
@@ -93,7 +93,14 @@ public class GameManager : MonoBehaviour {
 			if (isLevelUpTurn)
 			{
 				if(halfBeatCnt == 8)
-					if (Player.instance.skillPoint == 0) isLevelUpTurn = false;
+				{
+					if (Player.instance.skillPoint == 0)
+					{
+						isLevelUpTurn = false;
+						Player.instance.UpdateSprite();
+					}
+				}
+					
 			}
 			else if (halfBeatCnt == 1)
 			{
@@ -134,6 +141,7 @@ public class GameManager : MonoBehaviour {
 		if (Enemy.instance != null) return;
 		GameObject newEnemy = Instantiate(enemy);
 		newEnemy.GetComponent<Enemy>().career = (Character.Career)UnityEngine.Random.Range(0, 4);
+		newEnemy.GetComponent<SpriteRenderer>().sprite = enemies[(int)newEnemy.GetComponent<Enemy>().career];
 		newEnemy.GetComponent<Enemy>().InitializeProperties();
 	}
 
@@ -177,7 +185,7 @@ public class GameManager : MonoBehaviour {
 			error += temp * temp;
 		}
 
-		debug.text += playerActionIndex.ToString() + "\n" + enemyActionIndex + "\n" + enemyAttackStrength
+		debug.text += playerActionIndex + "\n" + enemyActionIndex + "\n" + enemyAttackStrength
 			+ "\n" + error
 			+ "\n" + maxError;
 		for (int i = 0; i < 4; ++i)
@@ -231,7 +239,7 @@ public class GameManager : MonoBehaviour {
 		{
 			if (enemyActionIndex == 1 || enemyActionIndex == 2)
 			{
-				Player.instance.ReceiveAttack(enemyActionIndex);
+				Player.instance.ReceiveAttack(enemyAttackStrength);
 				Player.instance.FailToMove();
 			}
 		}
