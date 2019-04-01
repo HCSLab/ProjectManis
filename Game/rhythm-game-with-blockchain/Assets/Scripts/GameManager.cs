@@ -16,15 +16,11 @@ public class GameManager : MonoBehaviour {
 	public GameObject enemy;
 	public GameObject beatIndicator;
 	public GameObject background;
-	public List<Sprite> backgrounds,enemies;
+	public List<Sprite> enemies;
 
 	public Text firstForecastText, secondForecastText, playerStatus, enemyStatus, combo;
 
-
 	public Text debug;
-
-
-	private int backgroundIndex = 0;
 
 	private struct KeyPress
 	{
@@ -81,9 +77,6 @@ public class GameManager : MonoBehaviour {
 		{
 			if (halfBeatCnt % 2 == 1)
 			{
-				background.GetComponent<SpriteRenderer>().sprite = backgrounds[backgroundIndex];
-				backgroundIndex = (backgroundIndex + 1) % 2;
-
 				GetIndicatorVisible();
 			}
 			else GetIndicatorInvisible();
