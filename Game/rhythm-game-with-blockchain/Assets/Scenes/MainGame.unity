@@ -694,7 +694,7 @@ MonoBehaviour:
   barrierVelocity: 2
   deltaScalePerFrame: 0.02
   playerVelocity: 2
-  bpm: 140
+  bpm: 100
   enemy: {fileID: 1918268086378426, guid: 91311a0e511fcac4a8d00e433b60acb9, type: 2}
   beatIndicator: {fileID: 528151349}
   background: {fileID: 0}
@@ -715,6 +715,7 @@ MonoBehaviour:
   enemyActionIndex: 0
   playerAttackStrength: 0
   enemyAttackStrength: 0
+  gameOver: 0
 --- !u!82 &1085100520
 AudioSource:
   m_ObjectHideFlags: 0
@@ -821,6 +822,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54a20d72bc4226c448399607ee8c8338, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  animatedItems:
+  - {fileID: 1983446546439350, guid: 4bce9e530e512004dbed66f03f6f208b, type: 2}
+  - {fileID: 1569061496240110, guid: 6626fda03c35d3146ac983770f720d5f, type: 2}
+  - {fileID: 1643401563700828, guid: 1d7ffbc7a08f8e04384d5ce6a8e3171d, type: 2}
   leftWalls:
   - {fileID: 21300000, guid: a27680fdce5c1b141b8adb0af046d2e8, type: 3}
   rightWalls:
@@ -840,7 +845,7 @@ MonoBehaviour:
   emptyItem: {fileID: 1935737193135468, guid: 15874c0c085704f4783f11c43d0d963b, type: 2}
   screenBorderDetector: {fileID: 1455801035264708, guid: 2a481db0af3b83742842e353e2badd89,
     type: 2}
-  itemsPerScreen: 8
+  itemsPerScreen: 4
 --- !u!4 &1085100523
 Transform:
   m_ObjectHideFlags: 0

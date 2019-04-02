@@ -1,15 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
-using UnityEngine.Audio;
 
 public class GameManager : MonoBehaviour {
 	static public GameManager instance;
-
-	public float bulletVelocity, barrierVelocity, deltaScalePerFrame, playerVelocity;
 
 	public int bpm;
 
@@ -51,6 +47,8 @@ public class GameManager : MonoBehaviour {
 	private bool isLevelUpTurn = false;
 
 	private BackgroundManager backgroundManager;
+
+	public bool gameOver = false;
 
 	private void Awake()
 	{
@@ -119,6 +117,7 @@ public class GameManager : MonoBehaviour {
 				HandleActions();
 				Player.instance.CheckLevelUp();
 			}
+
 			yield return new WaitForSeconds(secondsPerHalfBeat);
 		}
 	}
@@ -316,6 +315,7 @@ public class GameManager : MonoBehaviour {
 
 	public void GameOver()
 	{
+		gameOver = true;
 		SceneManager.LoadScene("Start");
 	}
 }

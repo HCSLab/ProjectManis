@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class BackgroundManager : MonoBehaviour {
+	public GameObject[] animatedItems;
 	public Sprite[] leftWalls, rightWalls, floors, items;
 	public GameObject emptyTile, emptyItem, screenBorderDetector;
 	public int itemsPerScreen = 4;
@@ -22,7 +23,17 @@ public class BackgroundManager : MonoBehaviour {
 			GenerateObject(emptyTile, rightWalls[0], new Vector3(3.5f * spriteLength, (i - 0.5f) * spriteLength, 0f));
 		}
 
-		GenerateItems();
+		for (int i = 0; i < itemsPerScreen; ++i)
+		{
+			var position = new Vector3(Random.Range(spriteLength * 1.5f, spriteLength * 3f) * (i < itemsPerScreen/2 ? 1 : -1), Random.Range(-120f, 120f), 0f);
+			GenerateObject(emptyItem, items[Random.Range(0, items.Length)], position);
+		}
+
+		for (int i = 0; i < itemsPerScreen / 2; ++i)
+		{
+			var position = new Vector3(Random.Range(spriteLength * 1.5f, spriteLength * 3f) * (i < itemsPerScreen / 4 ? 1 : -1), Random.Range(-120f, 120f), 0f);
+			Instantiate(animatedItems[Random.Range(0, animatedItems.Length)]).transform.position = position;
+		}
 
 		GenerateAScreenAbove();
 	}
@@ -33,15 +44,6 @@ public class BackgroundManager : MonoBehaviour {
 		newObject.GetComponent<SpriteRenderer>().sprite = sprite;
 		newObject.transform.position = position;
 		return newObject;
-	}
-
-	private void GenerateItems()
-	{
-		for(int i = 0; i < itemsPerScreen; ++i)
-		{
-			var position = new Vector3(Random.Range(spriteLength*1.5f,spriteLength*3f)*(i<4?1:-1), Random.Range(-120f, 120f), 0f);
-			GenerateObject(emptyItem, items[Random.Range(0, items.Length)],position);
-		}
 	}
 
 	public void GenerateAScreenAbove()
@@ -58,8 +60,16 @@ public class BackgroundManager : MonoBehaviour {
 		}
 		for (int i = 0; i < itemsPerScreen; ++i)
 		{
-			var position = new Vector3(Random.Range(spriteLength * 1.5f, spriteLength * 3f) * (i < 4 ? 1 : -1), Random.Range(-120f, 120f), 0f);
+			var position = new Vector3(Random.Range(spriteLength * 1.5f, spriteLength * 3f) * (i < itemsPerScreen / 2 ? 1 : -1), Random.Range(-120f, 120f), 0f);
 			screenAbove.Add(GenerateObject(emptyItem, items[Random.Range(0, items.Length)], position));
+		}
+
+		for (int i = 0; i < itemsPerScreen / 2; ++i)
+		{
+			var position = new Vector3(Random.Range(spriteLength * 1.5f, spriteLength * 3f) * (i < itemsPerScreen / 4 ? 1 : -1), Random.Range(-120f, 120f), 0f);
+			var now = Instantiate(animatedItems[Random.Range(0, animatedItems.Length)]);
+			now.transform.position = position;
+			screenAbove.Add(now);
 		}
 
 		screenAbove.Add(Instantiate(screenBorderDetector));

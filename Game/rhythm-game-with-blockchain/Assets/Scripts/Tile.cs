@@ -3,10 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Tile : MonoBehaviour {
-	public void MoveDownward(int distance)
-	{
-		transform.position -= new Vector3(0f, distance, 0f);
-	}
 
 	private void Update()
 	{
