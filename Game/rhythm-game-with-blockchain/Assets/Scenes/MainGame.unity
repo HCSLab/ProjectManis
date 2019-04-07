@@ -159,7 +159,7 @@ Prefab:
     - target: {fileID: 212177182358030780, guid: 2927b7d69fddf6648ab472124b7492e0,
         type: 2}
       propertyPath: m_SortingLayerID
-      value: 784131069
+      value: -2145255889
       objectReference: {fileID: 0}
     - target: {fileID: 212177182358030780, guid: 2927b7d69fddf6648ab472124b7492e0,
         type: 2}
@@ -452,6 +452,21 @@ Prefab:
       propertyPath: strength
       value: 50
       objectReference: {fileID: 0}
+    - target: {fileID: 212221394402405628, guid: 9392c1c819298214c990c8685c75663e,
+        type: 2}
+      propertyPath: m_Color.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 212221394402405628, guid: 9392c1c819298214c990c8685c75663e,
+        type: 2}
+      propertyPath: m_Color.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 212221394402405628, guid: 9392c1c819298214c990c8685c75663e,
+        type: 2}
+      propertyPath: m_Color.b
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 0}
   m_ParentPrefab: {fileID: 100100000, guid: 9392c1c819298214c990c8685c75663e, type: 2}
@@ -568,7 +583,7 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 784131069
+  m_SortingLayerID: -2145255889
   m_SortingLayer: 3
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300008, guid: d9ac55a2e83ca0d4c908db71ae771caa, type: 3}
@@ -643,7 +658,7 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 784131069
+  m_SortingLayerID: -2145255889
   m_SortingLayer: 3
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300008, guid: d9ac55a2e83ca0d4c908db71ae771caa, type: 3}
@@ -756,6 +771,7 @@ GameObject:
   - component: {fileID: 1085100519}
   - component: {fileID: 1085100520}
   - component: {fileID: 1085100521}
+  - component: {fileID: 1085100522}
   m_Layer: 0
   m_Name: Game Manager
   m_TagString: Untagged
@@ -926,6 +942,24 @@ MonoBehaviour:
   screenBorderDetector: {fileID: 1455801035264708, guid: 2a481db0af3b83742842e353e2badd89,
     type: 2}
   itemsPerScreen: 4
+--- !u!114 &1085100522
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1085100518}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ebd7661cb8c9819448df310ccfa83bed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  protector: {fileID: 1168067216705616, guid: 5a9cff74fcc3f334ab842a482f42477c, type: 2}
+  bloodParticleSystem: {fileID: 1071825138200392, guid: c6e2d76c9ab10514e8407647fde339b5,
+    type: 2}
+  screenSplash:
+  - {fileID: 1736212483733184, guid: 584bcf328b83b8542a0cdbb48272f4a5, type: 2}
+  - {fileID: 1943215596321124, guid: 036cf0dc19a93ca42af6505f59c1bb73, type: 2}
+  - {fileID: 1315732374218164, guid: 9d9552fdb7f44484e8a1179b7f7a5e89, type: 2}
 --- !u!4 &1085100523
 Transform:
   m_ObjectHideFlags: 0
@@ -1174,10 +1208,10 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 784131069
-  m_SortingLayer: 3
+  m_SortingLayer: 4
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: a21c7c60193516a44ab698373974d211, type: 3}
-  m_Color: {r: 1, g: 0.99149597, b: 0, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0

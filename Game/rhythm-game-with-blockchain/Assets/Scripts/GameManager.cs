@@ -145,6 +145,7 @@ public class GameManager : MonoBehaviour {
 		newEnemy.GetComponent<Enemy>().career = (Character.Career)UnityEngine.Random.Range(0, 4);
 		newEnemy.GetComponent<SpriteRenderer>().sprite = enemies[(int)newEnemy.GetComponent<Enemy>().career];
 		newEnemy.GetComponent<Enemy>().InitializeProperties();
+		AnimationManager.instance.SetEnemy(enemy);
 	}
 
 	private void ClearInput()
@@ -201,8 +202,11 @@ public class GameManager : MonoBehaviour {
 
 	private void HandleActions()
 	{
-		if (playerActionIndex == 0)
+		bool isPlayerHurt = false, isEnemyHurt = false;
+
+		if (playerActionIndex == 0)//player attack
 		{
+
 			if (enemyActionIndex == 0)
 			{
 				//enemy defended
@@ -211,10 +215,13 @@ public class GameManager : MonoBehaviour {
 			{
 				Enemy.instance.ReceiveAttack(playerAttackStrength);
 				Enemy.instance.ClearStrengthStorage();
+				isEnemyHurt = true;
+
 				if (enemyActionIndex == 1 || enemyActionIndex == 2)
 				{
 					Player.instance.ReceiveAttack(enemyAttackStrength);
 					Player.instance.FailToMove();
+					isPlayerHurt = true;
 				}
 			}
 		}
@@ -224,6 +231,7 @@ public class GameManager : MonoBehaviour {
 			{
 				Player.instance.ReceiveAttack(enemyAttackStrength);
 				Player.instance.FailToMove();
+				isPlayerHurt = true;
 			}
 			else if (enemyActionIndex == 2)
 			{
@@ -236,6 +244,7 @@ public class GameManager : MonoBehaviour {
 			{
 				Player.instance.ReceiveAttack(enemyAttackStrength);
 				Player.instance.FailToMove();
+				isPlayerHurt = true;
 			}
 			else if (enemyActionIndex == 1)
 			{
@@ -248,8 +257,20 @@ public class GameManager : MonoBehaviour {
 			{
 				Player.instance.ReceiveAttack(enemyAttackStrength);
 				Player.instance.FailToMove();
+				isPlayerHurt = true;
 			}
 		}
+
+		if (playerActionIndex == 0)
+			AnimationManager.instance.ScreenSplash(2);
+		if (isPlayerHurt)
+			AnimationManager.instance.HurtPlayer();
+		if (enemyActionIndex == 1 || enemyActionIndex == 2)
+			AnimationManager.instance.ScreenSplash(enemyActionIndex - 1);
+		else if (enemyActionIndex == 0)
+			AnimationManager.instance.LetEnemyDefend();
+		if (isEnemyHurt)
+			AnimationManager.instance.HurtEnemy();
 	}
 
 	private void UpdateUI()
