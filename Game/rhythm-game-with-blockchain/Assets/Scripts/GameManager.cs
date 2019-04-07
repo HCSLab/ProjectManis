@@ -61,7 +61,7 @@ public class GameManager : MonoBehaviour {
 
 		secondsPerBeat = 60f / (float)bpm;
 		secondsPerHalfBeat = secondsPerBeat / 2f;
-		halfBeatCnt = 8;
+		halfBeatCnt = 16;
 	}
 
 	private void Start()
@@ -77,17 +77,23 @@ public class GameManager : MonoBehaviour {
 
 		while (true)
 		{
+			halfBeatCnt = halfBeatCnt % 16 + 1;
+
 			if (halfBeatCnt % 2 == 1)
 			{
-				GetIndicatorVisible();
+				GetIndicatorInvisible();
 			}
-			else GetIndicatorInvisible();
+			else GetIndicatorVisible();
 
-			halfBeatCnt = halfBeatCnt % 8 + 1;
+			if (halfBeatCnt == 1)
+				beatIndicator.GetComponent<SpriteRenderer>().color = Color.grey;
+			if (halfBeatCnt == 9)
+				beatIndicator.GetComponent<SpriteRenderer>().color = Color.green;
+			
 
 			if (isLevelUpTurn)
 			{
-				if(halfBeatCnt == 8)
+				if(halfBeatCnt == 16)
 				{
 					if (Player.instance.skillPoint == 0)
 					{
@@ -177,7 +183,7 @@ public class GameManager : MonoBehaviour {
 
 		for (int i = 0; i < 4; ++i)
 		{
-			float temp = keyPresses[i].timing - secondsPerBeat * i -secondsPerHalfBeat;
+			float temp = keyPresses[i].timing - secondsPerBeat * i - secondsPerHalfBeat*9;
 			error += temp * temp;
 		}
 
@@ -295,7 +301,7 @@ public class GameManager : MonoBehaviour {
 
 		deltaTime += Time.deltaTime;
 
-		if (pressIndex<4)
+		if (!isLevelUpTurn && pressIndex<4 && halfBeatCnt>8)
 		{
 			for(int i = 0; i < 4; ++i)
 			{
