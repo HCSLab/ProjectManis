@@ -2,12 +2,12 @@
 "companyName": "DefaultCompany",
 "productName": "rhythm-game-with-blockchain",
 "dataUrl": "rhythm-game-with-blockchain-release.data.unityweb",
-"asmCodeUrl": "rhythm-game-with-blockchain-release.asm.code.unityweb",
-"asmMemoryUrl": "rhythm-game-with-blockchain-release.asm.memory.unityweb",
-"asmFrameworkUrl": "rhythm-game-with-blockchain-release.asm.framework.unityweb",
+"wasmCodeUrl": "rhythm-game-with-blockchain-release.wasm.code.unityweb",
+"wasmFrameworkUrl": "rhythm-game-with-blockchain-release.wasm.framework.unityweb",
 "TOTAL_MEMORY": 268435456,
 "graphicsAPI": ["WebGL 2.0", "WebGL 1.0"],
 "webglContextAttributes": {"preserveDrawingBuffer": false},
 "splashScreenStyle": "Dark",
-"backgroundColor": "#231F20"
+"backgroundColor": "#231F20",
+"cacheControl": {"default": "must-revalidate"}
 }
