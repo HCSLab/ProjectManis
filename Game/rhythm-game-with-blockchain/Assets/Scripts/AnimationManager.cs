@@ -11,11 +11,15 @@ public class AnimationManager : MonoBehaviour {
 	private GameObject player, enemy;
 	private float secondsPerBeat;
 
-	private void Start()
+	private void Awake()
 	{
 		instance = this;
-		player = Player.instance.gameObject;
 		secondsPerBeat = 60f / GameManager.instance.bpm;
+	}
+
+	private void Start()
+	{
+		player = Player.instance.gameObject;
 	}
 
 	public void SetEnemy(GameObject enemy)
@@ -54,6 +58,7 @@ public class AnimationManager : MonoBehaviour {
 	
 	private IEnumerator Hurt(GameObject target)
 	{
+		if (target == null) yield break;
 		var spriteRenderer = target.GetComponent<SpriteRenderer>();
 		spriteRenderer.color = Color.red;
 		const int shakeTimes = 10;

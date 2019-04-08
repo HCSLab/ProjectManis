@@ -6,7 +6,6 @@ using UnityEngine;
 public class Enemy : Character {
 	static public Enemy instance;
 
-	public int beatCnt, attackCnt;
 	public Career career;
 
 	private int firstMove, secondMove;
@@ -39,9 +38,6 @@ public class Enemy : Character {
 	{
 		if (instance == null) instance = this;
 		else Destroy(gameObject);
-
-		attackCnt = 0;
-		beatCnt = 7;
 
 		firstMove = secondMove = 0;
 		storageFactor = 1f;

@@ -11,12 +11,14 @@ public class GameManager : MonoBehaviour {
 
 	public GameObject enemy;
 	public GameObject beatIndicator;
-	public GameObject background;
 	public List<Sprite> enemies;
 
 	public Text firstForecastText, secondForecastText, playerStatus, enemyStatus, combo;
 
 	public Text debug;
+
+	public AudioSource bgmPlayer, effectPlayer;
+	public AudioClip[] soundEffects;
 
 	private struct KeyPress
 	{
@@ -48,6 +50,7 @@ public class GameManager : MonoBehaviour {
 
 	private BackgroundManager backgroundManager;
 
+	[HideInInspector]
 	public bool gameOver = false;
 
 	private void Awake()
@@ -111,8 +114,8 @@ public class GameManager : MonoBehaviour {
 			}
 			else if (halfBeatCnt == 2)
 			{
-				if(!gameObject.GetComponent<AudioSource>().isPlaying)
-					gameObject.GetComponent<AudioSource>().Play();
+				if (bgmPlayer.isPlaying == false)
+					bgmPlayer.Play();
 
 				if (Enemy.instance != null)
 				{
@@ -145,7 +148,7 @@ public class GameManager : MonoBehaviour {
 		newEnemy.GetComponent<Enemy>().career = (Character.Career)UnityEngine.Random.Range(0, 4);
 		newEnemy.GetComponent<SpriteRenderer>().sprite = enemies[(int)newEnemy.GetComponent<Enemy>().career];
 		newEnemy.GetComponent<Enemy>().InitializeProperties();
-		AnimationManager.instance.SetEnemy(enemy);
+		AnimationManager.instance.SetEnemy(newEnemy);
 	}
 
 	private void ClearInput()
@@ -307,6 +310,10 @@ public class GameManager : MonoBehaviour {
 			{
 				if (Input.GetKeyDown(keys[i]))
 				{
+					effectPlayer.Stop();
+					effectPlayer.clip = soundEffects[i];
+					effectPlayer.Play();
+
 					Player.instance.skillPoint -= 5;
 					switch (i)
 					{
@@ -328,6 +335,10 @@ public class GameManager : MonoBehaviour {
 			{
 				if (Input.GetKeyDown(keys[i]))
 				{
+					effectPlayer.Stop();
+					effectPlayer.clip = soundEffects[i];
+					effectPlayer.Play();
+
 					keyPresses[pressIndex++] = new KeyPress(i, deltaTime);
 					break;
 				}
