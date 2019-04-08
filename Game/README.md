@@ -5,25 +5,21 @@
 
 ## How to Play
 
-You should press the buttons in order shown on the beat indicator exactly when the beats occur, in order to avoid the coming barrier or shoot the enemy. You can only input when the beat indicator turns green. 
+* Normal Round:
+    * Input notes when the flickering bar is green. 
+        1. Q-W-O-P: Move Right
+        2. P-O-W-Q: Move Left
+        3. W-O-W-O: Attack
+        4. P-Q-P-Q: Accumulate Strength
+* Level-up Round:
+    * Simply Hit:
+        1. Q for 5 extra health
+        2. W for 5 extra strength
+        3. E for 5 extra defense
+        4. R for 5 extra luck
 
-All your inputs in a bar are graded into "MISS", "FINE", and "GREAT". Your attack has a bigger strength when your inputs in that bar is "GREAT". 
+* Terms
+    * $EffectiveAttackStrength = {max}(0,attacker.strength - receiver.defense)$
+    * (Strength Doubled) $CriticalHitPossibility = luck/1000.0$
+    * Each Successful Accumulate will let your next attack strength be multiplied by $2.25$
 
-The bpm(beats per minute) increases as you kill enemies. 
-
-## Fixed Issues
-
-### Wrong Pitch When Builded on WebGL
-Causes:
-1. The Audio Mixer of Unity is not working when building on WebGL. (Thus this issue does not occur when building on windows or simply running in Unity Editor. )
-
-Solution:
-* New audio-control-system is developed, so that we can control the speed of BGM without a Audio Mixer.
-
-### Poor Audio
-Causes:
-1. All the audio files are made via non-music-making-purpose softwares.
-2. When bpm increases, audio clips should be acclerated. However, it is realized by controling the pitches, so a lot of loss is made.
-
-Solution:
-* New high quality piano sampling clips are added. New audio-control-system controls the playing speed without re-sampling. 
