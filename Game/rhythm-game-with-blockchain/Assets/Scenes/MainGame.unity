@@ -342,6 +342,7 @@ RectTransform:
   - {fileID: 1165832252}
   - {fileID: 834064975}
   - {fileID: 1808908538}
+  - {fileID: 1045372510}
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -421,7 +422,7 @@ Prefab:
     - target: {fileID: 114809683418219958, guid: 9392c1c819298214c990c8685c75663e,
         type: 2}
       propertyPath: health
-      value: 100
+      value: 1000
       objectReference: {fileID: 0}
     - target: {fileID: 114809683418219958, guid: 9392c1c819298214c990c8685c75663e,
         type: 2}
@@ -450,7 +451,7 @@ Prefab:
     - target: {fileID: 114809683418219958, guid: 9392c1c819298214c990c8685c75663e,
         type: 2}
       propertyPath: strength
-      value: 50
+      value: 200
       objectReference: {fileID: 0}
     - target: {fileID: 212221394402405628, guid: 9392c1c819298214c990c8685c75663e,
         type: 2}
@@ -913,7 +914,7 @@ AudioSource:
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
-  Loop: 1
+  Loop: 0
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
@@ -1008,6 +1009,80 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1045372509
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 1045372510}
+  - component: {fileID: 1045372512}
+  - component: {fileID: 1045372511}
+  m_Layer: 5
+  m_Name: Enemy Name
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1045372510
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1045372509}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 399047369}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 1}
+  m_AnchorMax: {x: 0.5, y: 1}
+  m_AnchoredPosition: {x: 0, y: -120}
+  m_SizeDelta: {x: 50, y: 50}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1045372511
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1045372509}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 708705254, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
+      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+  m_FontData:
+    m_Font: {fileID: 12800000, guid: 5098fa637ed55e44cb1ec0bd1ce9834d, type: 3}
+    m_FontSize: 16
+    m_FontStyle: 0
+    m_BestFit: 0
+    m_MinSize: 1
+    m_MaxSize: 40
+    m_Alignment: 4
+    m_AlignByGeometry: 0
+    m_RichText: 1
+    m_HorizontalOverflow: 1
+    m_VerticalOverflow: 1
+    m_LineSpacing: 1
+  m_Text: '[Name]'
+--- !u!222 &1045372512
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1045372509}
 --- !u!1 &1085100518
 GameObject:
   m_ObjectHideFlags: 0
@@ -1019,6 +1094,7 @@ GameObject:
   - component: {fileID: 1085100519}
   - component: {fileID: 1085100521}
   - component: {fileID: 1085100522}
+  - component: {fileID: 1085100520}
   m_Layer: 0
   m_Name: Game Manager
   m_TagString: Untagged
@@ -1050,6 +1126,7 @@ MonoBehaviour:
   playerStatus: {fileID: 354113797}
   enemyStatus: {fileID: 1165832253}
   combo: {fileID: 1808908539}
+  enemyName: {fileID: 1045372511}
   debug: {fileID: 834064976}
   bgmPlayer: {fileID: 876045190}
   effectPlayer: {fileID: 686352062}
@@ -1065,6 +1142,17 @@ MonoBehaviour:
   playerAttackStrength: 0
   enemyAttackStrength: 0
   gameOver: 0
+--- !u!114 &1085100520
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1085100518}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 22b70d6ddcf2a504c98c81c7ca205640, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &1085100521
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1320,8 +1408,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   skillPoint: 0
-  health: 100
-  strength: 50
+  health: 1000
+  strength: 200
   luck: 100
   armour: 25
   level: 1

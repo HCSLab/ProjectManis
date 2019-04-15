@@ -8,6 +8,8 @@ public class Enemy : Character {
 
 	public Career career;
 
+	public string enemyName;
+
 	private int firstMove, secondMove;
 
 	private readonly float[,] actionPossibility = { 
@@ -24,6 +26,17 @@ public class Enemy : Character {
 		{ 10 + 5, 10 + 14, 5 + 9, 5 + 2 }
 	};
 
+	public void InitializePropertiesWithRequestedCharacterInfo(GenesisContractService.CharacterDetailsDTO requestedCharacter)
+	{
+		level = Player.instance.level;
+		health = (int)requestedCharacter._hp * 10;
+		strength = (int)requestedCharacter._str * 10;
+		luck = (int)requestedCharacter._luck * 10;
+		armour = (int)requestedCharacter._luck * 10;
+		career = GetCareer();
+		enemyName = requestedCharacter._name;
+	}
+
 	public void InitializeProperties()
 	{
 		int deltaLevel = Player.instance.level - 1;
@@ -32,6 +45,7 @@ public class Enemy : Character {
 		strength += deltaLevel * deltaProperties[(int)career, 1];
 		luck += deltaLevel * deltaProperties[(int)career, 2];
 		armour += deltaLevel * deltaProperties[(int)career, 3];
+		enemyName = "";
 	}
 
 	private void Awake()

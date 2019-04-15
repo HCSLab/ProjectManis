@@ -65,6 +65,7 @@ public class AnimationManager : MonoBehaviour {
 		var deltaPosition = new Vector3(5f, 5f, 0);
 		for(int i = 0; i < shakeTimes; ++i)
 		{
+			if (target == null) yield break;
 			target.transform.position += (i % 2 == 0 ? 1 : -1) * deltaPosition;
 			yield return new WaitForSeconds(secondsPerBeat*2/shakeTimes);
 		}

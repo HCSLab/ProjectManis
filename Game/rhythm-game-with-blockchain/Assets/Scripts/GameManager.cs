@@ -13,7 +13,7 @@ public class GameManager : MonoBehaviour {
 	public GameObject beatIndicator;
 	public List<Sprite> enemies;
 
-	public Text firstForecastText, secondForecastText, playerStatus, enemyStatus, combo;
+	public Text firstForecastText, secondForecastText, playerStatus, enemyStatus, combo, enemyName;
 
 	public Text debug;
 
@@ -46,9 +46,16 @@ public class GameManager : MonoBehaviour {
 	public int playerActionIndex, enemyActionIndex, playerAttackStrength, enemyAttackStrength;
 
 	private int halfBeatCnt;
+	private int enemyGenerationCnt;
+	private int bgmPlayCnt;
+
 	private bool isLevelUpTurn = false;
 
 	private BackgroundManager backgroundManager;
+
+	private GenesisContractService genesisContractService;
+
+	private bool isRequestingRandomCharacter = false;
 
 	[HideInInspector]
 	public bool gameOver = false;
@@ -65,11 +72,15 @@ public class GameManager : MonoBehaviour {
 		secondsPerBeat = 60f / (float)bpm;
 		secondsPerHalfBeat = secondsPerBeat / 2f;
 		halfBeatCnt = 16;
+		enemyGenerationCnt = 1;
+		bgmPlayCnt = 2;
 	}
 
 	private void Start()
 	{
-		backgroundManager = gameObject.GetComponent<BackgroundManager>();
+		genesisContractService = GetComponent<GenesisContractService>();
+		genesisContractService.RequestCharacterNo();
+		backgroundManager = GetComponent<BackgroundManager>();
 		backgroundManager.GenerateBackground();
 		StartCoroutine(HalfBeat());
 	}
@@ -88,11 +99,17 @@ public class GameManager : MonoBehaviour {
 			}
 			else GetIndicatorVisible();
 
-			if (halfBeatCnt == 1)
-				beatIndicator.GetComponent<SpriteRenderer>().color = Color.grey;
-			if (halfBeatCnt == 9)
-				beatIndicator.GetComponent<SpriteRenderer>().color = Color.green;
-			
+			if (isLevelUpTurn)
+			{
+				beatIndicator.GetComponent<SpriteRenderer>().color = Color.yellow;
+			}
+			else
+			{
+				if (halfBeatCnt == 1)
+					beatIndicator.GetComponent<SpriteRenderer>().color = Color.grey;
+				if (halfBeatCnt == 9)
+					beatIndicator.GetComponent<SpriteRenderer>().color = Color.green;
+			}
 
 			if (isLevelUpTurn)
 			{
@@ -108,14 +125,24 @@ public class GameManager : MonoBehaviour {
 			}
 			else if (halfBeatCnt == 1)
 			{
-				GenerateEnemy();
+				if(Enemy.instance == null)
+				{
+					if (enemyGenerationCnt == 5)
+					{
+						if(!isRequestingRandomCharacter)
+							StartCoroutine(GenerateEnemyFromGenesisCoroutine());
+					}
+					else
+						GenerateEnemy();
+				}
+				
 				lastActionOfPlayer = CheckInput();
 				ClearInput();
 			}
 			else if (halfBeatCnt == 2)
 			{
-				if (bgmPlayer.isPlaying == false)
-					bgmPlayer.Play();
+				bgmPlayCnt = bgmPlayCnt % 2 + 1;
+				if (bgmPlayCnt == 1) bgmPlayer.Play();
 
 				if (Enemy.instance != null)
 				{
@@ -141,14 +168,31 @@ public class GameManager : MonoBehaviour {
 		beatIndicator.SetActive(false);
 	}
 
+	private IEnumerator GenerateEnemyFromGenesisCoroutine()
+	{
+		isRequestingRandomCharacter = true;
+
+		yield return genesisContractService.RequestRandomCharacterCoroutine();
+		while (halfBeatCnt != 1)
+			yield return null;
+		GameObject newEnemy = Instantiate(enemy);
+		newEnemy.GetComponent<Enemy>().InitializePropertiesWithRequestedCharacterInfo(genesisContractService.requestedCharacter);
+		newEnemy.GetComponent<SpriteRenderer>().sprite = enemies[(int)newEnemy.GetComponent<Enemy>().career];
+		AnimationManager.instance.SetEnemy(newEnemy);
+
+		enemyGenerationCnt = enemyGenerationCnt % 5 + 1;
+
+		isRequestingRandomCharacter = false;
+	}
 	private void GenerateEnemy()
 	{
-		if (Enemy.instance != null) return;
 		GameObject newEnemy = Instantiate(enemy);
 		newEnemy.GetComponent<Enemy>().career = (Character.Career)UnityEngine.Random.Range(0, 4);
 		newEnemy.GetComponent<SpriteRenderer>().sprite = enemies[(int)newEnemy.GetComponent<Enemy>().career];
 		newEnemy.GetComponent<Enemy>().InitializeProperties();
 		AnimationManager.instance.SetEnemy(newEnemy);
+
+		enemyGenerationCnt = enemyGenerationCnt % 5 + 1;
 	}
 
 	private void ClearInput()
@@ -288,8 +332,15 @@ public class GameManager : MonoBehaviour {
 			+ "STR: " + Enemy.instance.strength + "\n"
 			+ "DEF: " + Enemy.instance.armour + "\n"
 			+ "LUCK: " + Enemy.instance.luck + "\n";
+
+			enemyName.text = Enemy.instance.enemyName + enemyGenerationCnt;
 		}
-		else firstForecastText.text = secondForecastText.text = "";
+		else
+		{
+			firstForecastText.text = secondForecastText.text = "";
+
+			enemyName.text = "" + enemyGenerationCnt;
+		}
 
 		playerStatus.text = "Player\n"
 			+ "HP: " + Player.instance.health + "\n"
