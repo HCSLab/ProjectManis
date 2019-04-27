@@ -296,12 +296,12 @@ MonoBehaviour:
   m_Script: {fileID: 1980459831, guid: f70555f144d8491a825f0804e09c671c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 800, y: 600}
   m_ScreenMatchMode: 0
-  m_MatchWidthOrHeight: 0
+  m_MatchWidthOrHeight: 0.675
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
@@ -340,7 +340,6 @@ RectTransform:
   - {fileID: 1220461846}
   - {fileID: 354113796}
   - {fileID: 1165832252}
-  - {fileID: 834064975}
   - {fileID: 1808908538}
   - {fileID: 1045372510}
   m_Father: {fileID: 0}
@@ -422,7 +421,7 @@ Prefab:
     - target: {fileID: 114809683418219958, guid: 9392c1c819298214c990c8685c75663e,
         type: 2}
       propertyPath: health
-      value: 1000
+      value: 500
       objectReference: {fileID: 0}
     - target: {fileID: 114809683418219958, guid: 9392c1c819298214c990c8685c75663e,
         type: 2}
@@ -451,7 +450,7 @@ Prefab:
     - target: {fileID: 114809683418219958, guid: 9392c1c819298214c990c8685c75663e,
         type: 2}
       propertyPath: strength
-      value: 200
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 212221394402405628, guid: 9392c1c819298214c990c8685c75663e,
         type: 2}
@@ -467,6 +466,11 @@ Prefab:
         type: 2}
       propertyPath: m_Color.b
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114809683418219958, guid: 9392c1c819298214c990c8685c75663e,
+        type: 2}
+      propertyPath: currentHealth
+      value: 500
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 0}
@@ -809,82 +813,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &834064974
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 834064975}
-  - component: {fileID: 834064977}
-  - component: {fileID: 834064976}
-  m_Layer: 5
-  m_Name: Debug
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &834064975
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 834064974}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 399047369}
-  m_RootOrder: 4
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 320, y: -40}
-  m_SizeDelta: {x: 160, y: 30}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &834064976
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 834064974}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 708705254, guid: f70555f144d8491a825f0804e09c671c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
-      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_FontData:
-    m_Font: {fileID: 12800000, guid: 5098fa637ed55e44cb1ec0bd1ce9834d, type: 3}
-    m_FontSize: 20
-    m_FontStyle: 0
-    m_BestFit: 0
-    m_MinSize: 2
-    m_MaxSize: 40
-    m_Alignment: 0
-    m_AlignByGeometry: 0
-    m_RichText: 1
-    m_HorizontalOverflow: 1
-    m_VerticalOverflow: 1
-    m_LineSpacing: 1
-  m_Text: 'Attack L
-
-'
---- !u!222 &834064977
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 834064974}
 --- !u!1 &876045189
 GameObject:
   m_ObjectHideFlags: 0
@@ -1037,7 +965,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 399047369}
-  m_RootOrder: 6
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
@@ -1127,7 +1055,6 @@ MonoBehaviour:
   enemyStatus: {fileID: 1165832253}
   combo: {fileID: 1808908539}
   enemyName: {fileID: 1045372511}
-  debug: {fileID: 834064976}
   bgmPlayer: {fileID: 876045190}
   effectPlayer: {fileID: 686352062}
   soundEffects:
@@ -1408,10 +1335,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   skillPoint: 0
-  health: 1000
-  strength: 200
+  health: 500
+  strength: 100
   luck: 100
   armour: 25
+  currentHealth: 500
   level: 1
   combo: 0
   exp: 0
@@ -1665,7 +1593,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 399047369}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}

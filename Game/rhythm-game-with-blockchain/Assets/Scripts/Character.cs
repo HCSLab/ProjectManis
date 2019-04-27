@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Character : MonoBehaviour {
-	public int skillPoint = 0, health = 100, strength = 50, luck = 100, armour = 25;
+	public int skillPoint = 0, health = 100, strength = 50, luck = 100, armour = 25, currentHealth = 100;
 	public int level = 1;
 
 	protected float storageFactor;
@@ -32,14 +32,17 @@ public class Character : MonoBehaviour {
 		luck += 5;
 		armour += 5;
 		level += 1;
+		currentHealth = health;
 	}
 
 	public void ReceiveAttack(int attakerStrength)
 	{
-		health -= UnityEngine.Mathf.Max(0, attakerStrength - armour);
-		if (health <= 0)
-			Destroy(gameObject);
+		currentHealth -= UnityEngine.Mathf.Max(0, attakerStrength - armour);
+		if (currentHealth <= 0)
+			TryToDestroy();
 	}
+
+	virtual protected void TryToDestroy() { }
 
 	public void ClearStrengthStorage()
 	{

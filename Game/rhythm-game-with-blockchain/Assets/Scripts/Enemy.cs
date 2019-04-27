@@ -32,9 +32,10 @@ public class Enemy : Character {
 		health = (int)requestedCharacter._hp * 10;
 		strength = (int)requestedCharacter._str * 10;
 		luck = (int)requestedCharacter._luck * 10;
-		armour = (int)requestedCharacter._luck * 10;
+		armour = Mathf.Min((int)requestedCharacter._int * 10, Player.instance.strength - 50);
 		career = GetCareer();
 		enemyName = requestedCharacter._name;
+		currentHealth = health;
 	}
 
 	public void InitializeProperties()
@@ -46,6 +47,7 @@ public class Enemy : Character {
 		luck += deltaLevel * deltaProperties[(int)career, 2];
 		armour += deltaLevel * deltaProperties[(int)career, 3];
 		enemyName = "";
+		currentHealth = health;
 	}
 
 	private void Awake()
@@ -125,6 +127,11 @@ public class Enemy : Character {
 			case 3: return "Store";
 			default: return "Nothing";
 		}
+	}
+
+	protected override void TryToDestroy()
+	{
+		Destroy(gameObject);
 	}
 
 	private void OnDestroy()

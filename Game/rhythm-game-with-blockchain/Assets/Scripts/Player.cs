@@ -88,8 +88,9 @@ public class Player : Character {
 		gameObject.GetComponent<SpriteRenderer>().sprite = playerSprites[(int)GetCareer()];
 	}
 
-	private void OnDestroy()
+	protected override void TryToDestroy()
 	{
+		DontDestroyOnLoad(gameObject);
 		GameManager.instance.GameOver();
 	}
 }

@@ -15,8 +15,6 @@ public class GameManager : MonoBehaviour {
 
 	public Text firstForecastText, secondForecastText, playerStatus, enemyStatus, combo, enemyName;
 
-	public Text debug;
-
 	public AudioSource bgmPlayer, effectPlayer;
 	public AudioClip[] soundEffects;
 
@@ -113,7 +111,12 @@ public class GameManager : MonoBehaviour {
 
 			if (isLevelUpTurn)
 			{
-				if(halfBeatCnt == 16)
+				if (halfBeatCnt == 2)
+				{
+					bgmPlayCnt = bgmPlayCnt % 2 + 1;
+					if (bgmPlayCnt == 1) bgmPlayer.Play();
+				}
+				else if (halfBeatCnt == 16)
 				{
 					if (Player.instance.skillPoint == 0)
 					{
@@ -206,12 +209,8 @@ public class GameManager : MonoBehaviour {
 		deltaTime = 0f;	
 	}
 
-	private int times = 0;
-
 	private int CheckInput()
 	{
-		debug.text = times + "\n";
-
 		List<int> possibleMoves = new List<int>();
 		Queue<int> movesToRemove = new Queue<int>();
 		for (int i = 0; i < 4; ++i) possibleMoves.Add(i);
@@ -234,14 +233,6 @@ public class GameManager : MonoBehaviour {
 			float temp = keyPresses[i].timing - secondsPerBeat * i - secondsPerHalfBeat*9;
 			error += temp * temp;
 		}
-
-		debug.text += playerActionIndex + "\n" + enemyActionIndex + "\n" + enemyAttackStrength
-			+ "\n" + error
-			+ "\n" + maxError;
-		for (int i = 0; i < 4; ++i)
-			debug.text += "\n"+keyPresses[i].key;
-		times++;
-		
 
 		if (error < maxError) return move;
 		else return -1;
@@ -318,6 +309,8 @@ public class GameManager : MonoBehaviour {
 			AnimationManager.instance.LetEnemyDefend();
 		if (isEnemyHurt)
 			AnimationManager.instance.HurtEnemy();
+
+		enemyActionIndex = -1;
 	}
 
 	private void UpdateUI()
@@ -328,7 +321,7 @@ public class GameManager : MonoBehaviour {
 			secondForecastText.text = Enemy.instance.GetForecast(1);
 
 			enemyStatus.text = "Enemy\n"
-			+ "HP: " + Enemy.instance.health + "\n"
+			+ "HP: " + Enemy.instance.currentHealth + "\n"
 			+ "STR: " + Enemy.instance.strength + "\n"
 			+ "DEF: " + Enemy.instance.armour + "\n"
 			+ "LUCK: " + Enemy.instance.luck + "\n";
@@ -343,7 +336,7 @@ public class GameManager : MonoBehaviour {
 		}
 
 		playerStatus.text = "Player\n"
-			+ "HP: " + Player.instance.health + "\n"
+			+ "HP: " + Player.instance.currentHealth + "\n"
 			+ "STR: " + Player.instance.strength + "\n"
 			+ "DEF: " + Player.instance.armour + "\n"
 			+ "LUCK: " + Player.instance.luck + "\n";
@@ -368,7 +361,7 @@ public class GameManager : MonoBehaviour {
 					Player.instance.skillPoint -= 5;
 					switch (i)
 					{
-						case 0: Player.instance.health += 5;break;
+						case 0: Player.instance.health += 5;Player.instance.currentHealth = Player.instance.health; break;
 						case 1: Player.instance.strength += 5;break;
 						case 2: Player.instance.armour += 5;break;
 						case 3: Player.instance.luck += 5;break;
@@ -405,6 +398,6 @@ public class GameManager : MonoBehaviour {
 	public void GameOver()
 	{
 		gameOver = true;
-		SceneManager.LoadScene("Start");
+		SceneManager.LoadScene("End");
 	}
 }
