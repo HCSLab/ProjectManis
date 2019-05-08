@@ -11,11 +11,14 @@ public class GameManager : MonoBehaviour {
 
 	public GameObject enemy;
 	public GameObject beatIndicator;
+	public GameObject[] buttons;
+	private Stack<GameObject> currentShownButtons;
 	public List<Sprite> enemies;
 
 	public Text firstForecastText, secondForecastText, playerStatus, enemyStatus, combo, enemyName;
 
-	public AudioSource bgmPlayer, effectPlayer;
+	public AudioSource bgmPlayer;
+	public GameObject effectPlayerPrefab;
 	public AudioClip[] soundEffects;
 
 	private struct KeyPress
@@ -62,6 +65,8 @@ public class GameManager : MonoBehaviour {
 	{
 		if (instance == null) instance = this;
 		else Destroy(this);
+
+		currentShownButtons = new Stack<GameObject>();
 
 		keyPresses = new KeyPress[4];
 		deltaTime = 0;
@@ -155,6 +160,10 @@ public class GameManager : MonoBehaviour {
 				else Player.instance.Act(-2); //refresh player's state
 				HandleActions();
 				Player.instance.CheckLevelUp();
+			}
+			else if (halfBeatCnt == 4)
+			{
+				ClearShownButtons();
 			}
 
 			yield return new WaitForSeconds(secondsPerHalfBeat);
@@ -344,6 +353,12 @@ public class GameManager : MonoBehaviour {
 		combo.text = "COMBO: " + Player.instance.combo;
 	}
 
+	private void ClearShownButtons()
+	{
+		while (currentShownButtons.Count > 0)
+			Destroy(currentShownButtons.Pop());
+	}
+
 	private void Update()
 	{
 		UpdateUI();
@@ -354,9 +369,11 @@ public class GameManager : MonoBehaviour {
 			{
 				if (Input.GetKeyDown(keys[i]))
 				{
-					effectPlayer.Stop();
-					effectPlayer.clip = soundEffects[i];
-					effectPlayer.Play();
+					var effectPlayer = Instantiate(effectPlayerPrefab);
+					Destroy(effectPlayer, 2f);
+					var effectPlayerAudioSource = effectPlayer.GetComponent<AudioSource>();
+					effectPlayerAudioSource.clip = soundEffects[i];
+					effectPlayerAudioSource.Play();
 
 					Player.instance.skillPoint -= 5;
 					switch (i)
@@ -379,11 +396,17 @@ public class GameManager : MonoBehaviour {
 			{
 				if (Input.GetKeyDown(keys[i]))
 				{
-					effectPlayer.Stop();
-					effectPlayer.clip = soundEffects[i];
-					effectPlayer.Play();
+					var effectPlayer = Instantiate(effectPlayerPrefab);
+					Destroy(effectPlayer, 2f);
+					var effectPlayerAudioSource = effectPlayer.GetComponent<AudioSource>();
+					effectPlayerAudioSource.clip = soundEffects[i];
+					effectPlayerAudioSource.Play();
+
+					currentShownButtons.Push(Instantiate(buttons[i]));
+					currentShownButtons.Peek().transform.position = buttons[pressIndex].transform.position;
 
 					keyPresses[pressIndex++] = new KeyPress(i, deltaTime);
+
 					break;
 				}
 			}
