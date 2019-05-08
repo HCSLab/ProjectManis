@@ -9,7 +9,7 @@ public class AnimatedItem : Tile {
 	private SpriteRenderer spriteRenderer;
 
 	private void Start () {
-		secondsPerFlash = GameManager.instance.secondsPerBeat * 4f / sprites.Length;
+		secondsPerFlash = GameManager.instance == null?1f/16f:GameManager.instance.secondsPerBeat * 4f / sprites.Length;
 		spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
 		StartCoroutine(Flash());
 	}

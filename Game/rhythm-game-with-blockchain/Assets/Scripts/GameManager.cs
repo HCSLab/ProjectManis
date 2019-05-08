@@ -11,11 +11,12 @@ public class GameManager : MonoBehaviour {
 
 	public GameObject enemy;
 	public GameObject beatIndicator;
+	public GameObject gradeHolder;
 	public GameObject[] buttons;
 	private Stack<GameObject> currentShownButtons;
 	public List<Sprite> enemies;
 
-	public Text firstForecastText, secondForecastText, playerStatus, enemyStatus, combo, enemyName;
+	public Text firstForecastText, secondForecastText, playerStatus, enemyStatus, combo, enemyName, grade;
 
 	public AudioSource bgmPlayer;
 	public GameObject effectPlayerPrefab;
@@ -86,6 +87,9 @@ public class GameManager : MonoBehaviour {
 		backgroundManager = GetComponent<BackgroundManager>();
 		backgroundManager.GenerateBackground();
 		StartCoroutine(HalfBeat());
+
+		grade.text = string.Empty;
+		gradeHolder.SetActive(false);
 	}
 
 	IEnumerator HalfBeat()
@@ -145,6 +149,13 @@ public class GameManager : MonoBehaviour {
 				}
 				
 				lastActionOfPlayer = CheckInput();
+				if (pressIndex != 0)
+				{
+					if (lastActionOfPlayer != -1)
+						ShowGrade("SUCCESS",Color.green);
+					else
+						ShowGrade("FAIL",Color.red);
+				}
 				ClearInput();
 			}
 			else if (halfBeatCnt == 2)
@@ -168,6 +179,23 @@ public class GameManager : MonoBehaviour {
 
 			yield return new WaitForSeconds(secondsPerHalfBeat);
 		}
+	}
+
+	private void ShowGrade(string text, Color color)
+	{
+		StartCoroutine(ShowGradeCoroutine(text, color));
+	}
+
+	private IEnumerator ShowGradeCoroutine(string text,Color color)
+	{
+		yield return new WaitForSeconds(secondsPerHalfBeat);
+		gradeHolder.SetActive(true);
+		grade.text = text;
+		grade.color = color;
+		yield return new WaitForSeconds(secondsPerHalfBeat * 6);
+		grade.text = string.Empty;
+		gradeHolder.SetActive(false);
+		yield break;
 	}
 
 	private void GetIndicatorVisible()

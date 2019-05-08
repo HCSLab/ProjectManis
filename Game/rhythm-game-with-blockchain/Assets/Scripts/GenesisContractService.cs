@@ -58,6 +58,13 @@ public class GenesisContractService : MonoBehaviour
 		return StartCoroutine(GetCharacterDetails(UnityEngine.Random.Range(0, characterNo)));
 	}
 
+	public void UpdatePrivateKey(string newPrivateKey)
+	{
+		accountPrivateKey = newPrivateKey;
+		accountAddress = Nethereum.Signer.EthECKey.GetPublicAddress(accountPrivateKey);
+		Debug.Log("New pri key: " + newPrivateKey);
+		Debug.Log("New pub key: " + accountAddress);
+	}
 	public IEnumerator RequestAndPrintCharacterDetails(int index)
 	{
 		yield return StartCoroutine(GetCharacterDetails(index));
@@ -123,19 +130,19 @@ public class GenesisContractService : MonoBehaviour
 		Debug.Log("Character fetched");
 	}
 
-	public Coroutine InsertCharacter(Character ch)
+	public Coroutine InsertCharacter(Character ch, string name)
 	{
-		return StartCoroutine(InsertCharacterRequest(ch));
+		return StartCoroutine(InsertCharacterRequest(ch,name));
 	}
 
-	private TransactionInput CreateInsertCharacterInput(Character ch)
+	private TransactionInput CreateInsertCharacterInput(Character ch, string name)
 	{
 		return contract.GetFunction("insertCharacter").CreateTransactionInput(
 			accountAddress,
 			new HexBigInteger(2000000),
 			new HexBigInteger(200),
 			new HexBigInteger(0),
-			"NONE",
+			name, 
 			ch.health / 10,
 			50,
 			ch.strength / 10,
@@ -148,10 +155,10 @@ public class GenesisContractService : MonoBehaviour
 			);
 	}
 
-	private IEnumerator InsertCharacterRequest(Character ch)
+	private IEnumerator InsertCharacterRequest(Character ch,string name)
 	{
-		var transactionInput = CreateInsertCharacterInput(ch);
-		Debug.Log("Inserting Character with luck of " + ch.luck);
+		var transactionInput = CreateInsertCharacterInput(ch, name);
+		Debug.Log("Inserting Character with luck of " + ch.luck +" and name of " + name);
 		var transactionSignedRequest = new TransactionSignedUnityRequest(_url, accountPrivateKey);
 		yield return transactionSignedRequest.SignAndSendTransaction(transactionInput);
 		if(transactionSignedRequest.Exception == null)

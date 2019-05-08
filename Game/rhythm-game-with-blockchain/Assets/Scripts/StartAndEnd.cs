@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class StartAndEnd : MonoBehaviour {
 	public GameObject uploadButton, uploadingInfo, uploadSuccessInfo;
-
+	public InputField nameInput, privateKeyInput;
 	private Character player;
 	private GameObject playerInstance;
 
@@ -25,9 +26,12 @@ public class StartAndEnd : MonoBehaviour {
 	private IEnumerator UploadCharacterCoroutine()
 	{
 		var genesisContractService = GetComponent<GenesisContractService>();
+		if (privateKeyInput.text != string.Empty)
+			genesisContractService.UpdatePrivateKey(privateKeyInput.text);
 		uploadButton.SetActive(false);
 		uploadingInfo.SetActive(true);
-		yield return genesisContractService.InsertCharacter(player);
+		var name = nameInput.text == string.Empty ? "NONE" : nameInput.text;
+		yield return genesisContractService.InsertCharacter(player,name);
 		uploadingInfo.SetActive(false);
 		uploadSuccessInfo.SetActive(true);
 	}
