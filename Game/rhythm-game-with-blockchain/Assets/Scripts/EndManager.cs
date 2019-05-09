@@ -4,17 +4,17 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class StartAndEnd : MonoBehaviour {
-	public GameObject uploadButton, uploadingInfo, uploadSuccessInfo;
+public class EndManager: MonoBehaviour {
+	public GameObject uploadButton, uploadingInfo, uploadSuccessInfo, txnHash;
 	public InputField nameInput, privateKeyInput;
-	private Character player;
+	private Player player;
 	private GameObject playerInstance;
 
 	private void Start()
 	{
 		playerInstance = GameObject.FindGameObjectWithTag("Player");
-		if (playerInstance == null) return;
-		player = playerInstance.GetComponent<Character>();
+		player = playerInstance.GetComponent<Player>();
+		Debug.Log("Weakness: "+ player.weakness);
 		playerInstance.SetActive(false);
 	}
 
@@ -34,11 +34,13 @@ public class StartAndEnd : MonoBehaviour {
 		yield return genesisContractService.InsertCharacter(player,name);
 		uploadingInfo.SetActive(false);
 		uploadSuccessInfo.SetActive(true);
+		txnHash.SetActive(true);
+		txnHash.GetComponent<Text>().text = "Txn Hash:\n" + genesisContractService.lastUploadTxnHash;
 	}
 
 	public void GameStart()
 	{
-		if(playerInstance!=null)Destroy(playerInstance);
+		Destroy(playerInstance);
 		SceneManager.LoadScene("MainGame");
 	}
 }

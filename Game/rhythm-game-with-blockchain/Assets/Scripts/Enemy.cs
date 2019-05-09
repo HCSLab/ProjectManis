@@ -12,10 +12,12 @@ public class Enemy : Character {
 
 	private int firstMove, secondMove;
 
+	public int? weakness = null; 
+
 	private readonly float[,] actionPossibility = { 
-		{ 0.25f, 0.25f, 0.25f, 0.25f }, //warrier
-		{ 0.25f, 0.2f, 0.2f, 0.35f }, //tank
-		{ 0.35f, 0.2f, 0.2f, 0.25f }, //magician
+		{ 0.15f, 0.30f, 0.30f, 0.25f }, //warrier
+		{ 0.15f, 0.25f, 0.25f, 0.35f }, //tank
+		{ 0.20f, 0.25f, 0.25f, 0.3f }, //magician
 		{ 0.15f, 0.3f, 0.3f, 0.25f } //thief
 	};
 
@@ -36,6 +38,10 @@ public class Enemy : Character {
 		career = GetCareer();
 		enemyName = requestedCharacter._name;
 		currentHealth = health;
+		if (requestedCharacter._optionalAttrs.StartsWith("Rhythm Dungeon Weakness"))
+			weakness = int.Parse(requestedCharacter._optionalAttrs.Replace("Rhythm Dungeon Weakness", string.Empty));
+		else
+			weakness = null;
 	}
 
 	public void InitializeProperties()

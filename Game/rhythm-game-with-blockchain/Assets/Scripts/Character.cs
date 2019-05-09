@@ -15,9 +15,9 @@ public class Character : MonoBehaviour {
 
 	public Career GetCareer()
 	{
-		if (health >= strength && health >= armour && health >= luck)
+		if (health >= strength && health >= armour*3 && health >= luck)
 			return Career.Warrier;
-		else if (armour >= strength && armour >= luck)
+		else if (armour*3 >= strength && armour*3 >= luck)
 			return Career.Tank;
 		else if (strength >= luck)
 			return Career.Magician;
@@ -49,7 +49,7 @@ public class Character : MonoBehaviour {
 		storageFactor = 1f;
 	}
 
-	protected void StoreStrength()
+	public void StoreStrength()
 	{
 		storageFactor += 1.25f;
 	}

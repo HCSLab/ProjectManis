@@ -11,13 +11,13 @@ public class GameManager : MonoBehaviour {
 
 	public GameObject enemy;
 	public GameObject beatIndicator;
-	public GameObject gradeHolder;
+	public GameObject gradeHolder, weaknessHolder;
 	public GameObject[] buttons;
 	private Stack<GameObject> currentShownButtons;
 	public List<Sprite> enemies;
 
 	public Text firstForecastText, secondForecastText, playerStatus, enemyStatus, combo, enemyName, grade;
-	public Text playerStorageRate, enemyStorageRate;
+	public Text playerStorageRate, enemyStorageRate, weaknessText;
 
 	public GameObject levelUpNotification, careerChangeNotification;
 	public Text careerChangeText;
@@ -65,6 +65,8 @@ public class GameManager : MonoBehaviour {
 
 	[HideInInspector]
 	public bool gameOver = false;
+
+	private int[] mistakeCount = new int[4];
 
 	private void Awake()
 	{
@@ -177,6 +179,14 @@ public class GameManager : MonoBehaviour {
 				HandleActions();
 				Player.instance.CheckLevelUp();
 			}
+			else if (halfBeatCnt == 3)
+			{
+				if (Enemy.instance == null)
+				{
+					weaknessHolder.SetActive(false);
+					weaknessText.text = string.Empty;
+				}
+			}
 			else if (halfBeatCnt == 4)
 			{
 				ClearShownButtons();
@@ -280,8 +290,28 @@ public class GameManager : MonoBehaviour {
 		else return -1;
 	}
 
+	//to do: move this into AnimationManager
+	private IEnumerator ChangeWeaknessHolderColor()
+	{
+		const int shakeTimes = 10;
+		var deltaPosition = new Vector3(5f, 5f, 0);
+		for (int i = 0; i < shakeTimes; ++i)
+		{
+			if (weaknessHolder == null) yield break;
+			weaknessHolder.transform.position += (i % 2 == 0 ? 1 : -1) * deltaPosition;
+			yield return new WaitForSeconds(secondsPerBeat * 2 / shakeTimes);
+		}
+		yield break;
+	}
+
 	private void HandleActions()
 	{
+		if (playerActionIndex == Enemy.instance.weakness)
+		{
+			StartCoroutine(ChangeWeaknessHolderColor());
+			Player.instance.StoreStrength();
+		}
+
 		bool isPlayerHurt = false, isEnemyHurt = false;
 
 		if (playerActionIndex == 0)//player attack
@@ -341,6 +371,15 @@ public class GameManager : MonoBehaviour {
 			}
 		}
 
+		if (enemyActionIndex == 0 && playerActionIndex != 3)
+			mistakeCount[3] += 1;
+		if (enemyActionIndex == 1 && playerActionIndex != 2)
+			mistakeCount[2] += 1;
+		if (enemyActionIndex == 2 && playerActionIndex != 1)
+			mistakeCount[1] += 1;
+		if (enemyActionIndex == 3 && playerActionIndex != 0)
+			mistakeCount[0] += 1;
+
 		if (playerActionIndex == 0)
 			AnimationManager.instance.ScreenSplash(2);
 		if (isPlayerHurt)
@@ -371,8 +410,14 @@ public class GameManager : MonoBehaviour {
 			if (Enemy.instance.enemyName != string.Empty)
 			{
 				enemyName.text = Enemy.instance.enemyName;
+				if (Enemy.instance.weakness != null)
+				{
+					string[] weaknessToString = { "Attack", "Dash L", "Dash R", "Store" };
+					weaknessText.text = weaknessToString[(int)Enemy.instance.weakness];
+					weaknessHolder.SetActive(true);
+				}
 			}
-			enemyName.text = enemyGenerationCnt.ToString();
+			else enemyName.text = enemyGenerationCnt.ToString();
 
 			if (Mathf.Abs(Enemy.instance.storageFactor - 1f) > Mathf.Epsilon)
 				enemyStorageRate.text = "+" + (int)(Enemy.instance.storageFactor * 100 - 100) + "%";
@@ -476,6 +521,15 @@ public class GameManager : MonoBehaviour {
 	{
 		levelUpNotification.SetActive(true);
 		isLevelUpTurn = true;
+	}
+
+	public int GetWeakness()
+	{
+		var index = 0;
+		for(int i = 0; i < 4; ++i)
+			if (mistakeCount[i] > mistakeCount[index])
+				index = i;
+		return index;
 	}
 
 	public void GameOver()

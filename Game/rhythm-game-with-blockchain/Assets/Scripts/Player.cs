@@ -10,6 +10,8 @@ public class Player : Character {
 
 	public List<Sprite> playerSprites;
 
+	public int weakness;
+
 	private Career oldCareer;
 
 	private void Awake()
@@ -96,6 +98,7 @@ public class Player : Character {
 	protected override void TryToDestroy()
 	{
 		DontDestroyOnLoad(gameObject);
+		weakness = GameManager.instance.GetWeakness();
 		GameManager.instance.GameOver();
 	}
 }
