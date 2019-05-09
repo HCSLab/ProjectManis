@@ -57,8 +57,8 @@ public class GenesisContractService : MonoBehaviour
 
 	public Coroutine RequestRandomCharacterCoroutine()
 	{
-		//return StartCoroutine(GetCharacterDetails(UnityEngine.Random.Range(0, characterNo)));
-		return StartCoroutine(GetCharacterDetails(15));
+		return StartCoroutine(GetCharacterDetails(UnityEngine.Random.Range(0, characterNo)));
+		//return StartCoroutine(GetCharacterDetails(15));
 	}
 
 	public void UpdatePrivateKey(string newPrivateKey)
