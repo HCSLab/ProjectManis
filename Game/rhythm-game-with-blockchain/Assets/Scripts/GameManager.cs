@@ -16,7 +16,7 @@ public class GameManager : MonoBehaviour {
 	private Stack<GameObject> currentShownButtons;
 	public List<Sprite> enemies;
 
-	public Text firstForecastText, secondForecastText, playerStatus, enemyStatus, combo, enemyName, grade;
+	public Text firstForecastText, secondForecastText, playerStatus, enemyStatus, combo, enemyName, grade, playerStorageRate, enemyStorageRate;
 
 	public AudioSource bgmPlayer;
 	public GameObject effectPlayerPrefab;
@@ -358,12 +358,21 @@ public class GameManager : MonoBehaviour {
 			secondForecastText.text = Enemy.instance.GetForecast(1);
 
 			enemyStatus.text = "Enemy\n"
-			+ "HP: " + Enemy.instance.currentHealth + "\n"
-			+ "STR: " + Enemy.instance.strength + "\n"
-			+ "DEF: " + Enemy.instance.armour + "\n"
-			+ "LUCK: " + Enemy.instance.luck + "\n";
+			+ Enemy.instance.currentHealth + "\n"
+			+ Enemy.instance.strength + "\n"
+			+ Enemy.instance.armour + "\n"
+			+ Enemy.instance.luck + "\n";
 
-			enemyName.text = Enemy.instance.enemyName + enemyGenerationCnt;
+			if (Enemy.instance.enemyName != string.Empty)
+			{
+				enemyName.text = Enemy.instance.enemyName;
+			}
+			enemyName.text = enemyGenerationCnt.ToString();
+
+			if (Mathf.Abs(Enemy.instance.storageFactor - 1f) > Mathf.Epsilon)
+				enemyStorageRate.text = "+" + (int)(Enemy.instance.storageFactor * 100 - 100) + "%";
+			else
+				enemyStorageRate.text = string.Empty;
 		}
 		else
 		{
@@ -372,13 +381,17 @@ public class GameManager : MonoBehaviour {
 			enemyName.text = "" + enemyGenerationCnt;
 		}
 
-		playerStatus.text = "Player\n"
-			+ "HP: " + Player.instance.currentHealth + "\n"
-			+ "STR: " + Player.instance.strength + "\n"
-			+ "DEF: " + Player.instance.armour + "\n"
-			+ "LUCK: " + Player.instance.luck + "\n";
+		playerStatus.text = "You\n"
+			+ Player.instance.currentHealth + "\n"
+			+ Player.instance.strength + "\n"
+			+ Player.instance.armour + "\n"
+			+ Player.instance.luck + "\n";
 
-		combo.text = "COMBO: " + Player.instance.combo;
+		combo.text = "COMBO: +" + Player.instance.combo+@"0%";
+		if (Mathf.Abs(Player.instance.storageFactor - 1f) > Mathf.Epsilon)
+			playerStorageRate.text = "+" + (int)(Player.instance.storageFactor * 100 - 100) + "%";
+		else
+			playerStorageRate.text = string.Empty;
 	}
 
 	private void ClearShownButtons()

@@ -6,7 +6,7 @@ public class Character : MonoBehaviour {
 	public int skillPoint = 0, health = 100, strength = 50, luck = 100, armour = 25, currentHealth = 100;
 	public int level = 1;
 
-	protected float storageFactor;
+	public float storageFactor;
 
 	public enum Career
 	{

@@ -46,7 +46,7 @@ public class Enemy : Character {
 		strength += deltaLevel * deltaProperties[(int)career, 1];
 		luck += deltaLevel * deltaProperties[(int)career, 2];
 		armour += deltaLevel * deltaProperties[(int)career, 3];
-		enemyName = "";
+		enemyName = string.Empty;
 		currentHealth = health;
 	}
 
