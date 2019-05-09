@@ -16,7 +16,11 @@ public class GameManager : MonoBehaviour {
 	private Stack<GameObject> currentShownButtons;
 	public List<Sprite> enemies;
 
-	public Text firstForecastText, secondForecastText, playerStatus, enemyStatus, combo, enemyName, grade, playerStorageRate, enemyStorageRate;
+	public Text firstForecastText, secondForecastText, playerStatus, enemyStatus, combo, enemyName, grade;
+	public Text playerStorageRate, enemyStorageRate;
+
+	public GameObject levelUpNotification, careerChangeNotification;
+	public Text careerChangeText;
 
 	public AudioSource bgmPlayer;
 	public GameObject effectPlayerPrefab;
@@ -130,6 +134,7 @@ public class GameManager : MonoBehaviour {
 					if (Player.instance.skillPoint == 0)
 					{
 						isLevelUpTurn = false;
+						levelUpNotification.SetActive(false);
 						Player.instance.UpdateSprite();
 					}
 				}
@@ -454,8 +459,22 @@ public class GameManager : MonoBehaviour {
 		}
 	}
 
+	public void ShowCareerChange(string oldCareer,string newCareer)
+	{
+		StartCoroutine(ShowCareerChangeCoroutine(oldCareer, newCareer));
+	}
+
+	private IEnumerator ShowCareerChangeCoroutine(string oldCareer,string newCareer)
+	{
+		careerChangeNotification.SetActive(true);
+		careerChangeText.text = "Career changed!\n" + oldCareer + " -> " + newCareer;
+		yield return new WaitForSeconds(2f);
+		careerChangeNotification.SetActive(false);
+	}
+
 	public void EnterLevelUpTurn()
 	{
+		levelUpNotification.SetActive(true);
 		isLevelUpTurn = true;
 	}
 

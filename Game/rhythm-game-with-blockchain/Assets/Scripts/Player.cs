@@ -10,6 +10,8 @@ public class Player : Character {
 
 	public List<Sprite> playerSprites;
 
+	private Career oldCareer;
+
 	private void Awake()
 	{
 		if (instance == null) instance = this;
@@ -78,6 +80,7 @@ public class Player : Character {
 		if (exp >= 3 * UnityEngine.Mathf.Log(level + 3f,2.71828f))
 		{
 			exp = 0;
+			oldCareer = GetCareer();
 			LevelUp();
 			GameManager.instance.EnterLevelUpTurn();
 		}
@@ -85,6 +88,8 @@ public class Player : Character {
 
 	public void UpdateSprite()
 	{
+		if (oldCareer != GetCareer())
+			GameManager.instance.ShowCareerChange(oldCareer.ToString(), GetCareer().ToString());
 		gameObject.GetComponent<SpriteRenderer>().sprite = playerSprites[(int)GetCareer()];
 	}
 
